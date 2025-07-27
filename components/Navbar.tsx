@@ -1,23 +1,54 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 
-export default function Navbar() {
+import { fetchQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
+import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
+
+export async function StaticTasks() {}
+import LogoutButton from "@/components/LogoutButton";
+
+export default async function Navbar() {
+  const user = await fetchQuery(
+    api.users.currentUser,
+    {},
+    {
+      token: await convexAuthNextjsToken(),
+    }
+  );
+
+  console.log("Current user:", user);
+
   return (
     <nav className="bg-primary text-primary-foreground flex justify-between p-4 items-center">
       <div className="pl-4">
-        <Link href="/bazaar">
-          <p className="text-2xl font-sans">BazaarPlace</p>
+        <Link href="/bazaar" className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="BazaarPlace Logo"
+            width={50}
+            height={50}
+            className="mr-2"
+          />
+          <p className="invisible sm:text-3xl sm:visible font-sans">BazaarPlace</p>
         </Link>
       </div>
-      <div className="flex pr-4">
+
+      <div className="flex pr-4 space-x-2 px-2 items-center">
+        <p className="invisible sm:visible">{user?.username}</p>
+        <Image
+          src={user?.profile_picture || "https://placehold.co/40x40"}
+          alt="Profile Picture"
+          width={40}
+          height={40}
+          className="rounded-full"
+        />
         <Link href="/create-post">
           <Button variant={"secondary"}>create</Button>
         </Link>
-        <Link href="/logout">
-          <Button variant={"secondary"} className="ml-2">
-            Logout
-          </Button>
-        </Link>
+
+        <LogoutButton />
       </div>
     </nav>
   );

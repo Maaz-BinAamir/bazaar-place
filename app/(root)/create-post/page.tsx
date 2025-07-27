@@ -8,8 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
+import { useRouter } from "next/navigation";
+
 export default function Page() {
   const createPost = useMutation(api.posts.create);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,8 +32,8 @@ export default function Page() {
 
       console.log("Post created with ID:", id);
 
-      // clear form
-      (e.target as HTMLFormElement).reset();
+      // redirect to bazaar
+      router.push("/bazaar");
     } catch (error) {
       console.error("Error creating post:", error);
     }
@@ -43,11 +46,11 @@ export default function Page() {
       </div>
 
       <form
-        className="flex flex-col max-w-[800px] justify-center mx-auto m-4 space-y-2"
+        className="flex flex-col max-w-[800px] justify-center mx-auto m-4 px-4 space-y-2"
         onSubmit={handleSubmit}
       >
         <Label htmlFor="title">Title</Label>
-        <Input id="title" name="title"/>
+        <Input id="title" name="title" />
 
         <Label htmlFor="description">Description</Label>
         <Textarea id="description" name="description" />

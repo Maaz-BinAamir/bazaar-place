@@ -12,7 +12,7 @@ export const get = query({
         return {
           ...post,
           author: author
-            ? { name: author.first_name, email: author.email }
+            ? { name: author.username, email: author.email }
             : null,
         };
       })

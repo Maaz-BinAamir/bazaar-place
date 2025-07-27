@@ -1,8 +1,8 @@
 "use client";
 
 import { useAuthActions } from "@convex-dev/auth/react";
-
 import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -13,7 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
@@ -47,7 +46,7 @@ export default function SignUpPage() {
     <div className="flex justify-center items-center h-screen">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Create an account</CardTitle>
+          <CardTitle className="text-2xl">Complete Signing Up</CardTitle>
         </CardHeader>
         <form onSubmit={handleSignUp}>
           <CardContent>
@@ -57,24 +56,24 @@ export default function SignUpPage() {
                 <Input id="username" type="username" name="username" required />
               </div>
               <div className="grid gap-1">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" name="email" required />
+                <Label htmlFor="first">First Name</Label>
+                <Input id="first" type="text" name="first" required />
               </div>
               <div className="grid gap-1">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" name="password" required />
+                <Label htmlFor="last">Last Name</Label>
+                <Input id="last" type="text" name="last" required />
+              </div>
+              <div className="grid gap-1">
+                <Label htmlFor="address">Address</Label>
+                <Input id="address" type="text" name="address" required />
+              </div>
+              <div className="grid gap-1">
+                <Label htmlFor="phone">Phone</Label>
+                <Input id="phone" type="text" name="phone" required />
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex-col gap-2">
-            <div className="self-start">
-              <Link
-                href="/login"
-                className="text-sm underline-offset-4 hover:underline"
-              >
-                Already have an account?
-              </Link>
-            </div>
+          <CardFooter className="mt-6">
             <Button type="submit" className="w-full">
               Sign Up
             </Button>

@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import { useAuthActions } from "@convex-dev/auth/react";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,13 +12,27 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
-// import { redirect } from "next/navigation";
 
-export default function page() {
-  //   const login = async () => {
-  //     response = await ()
-  //   };
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+export default function LoginPage() {
+  const { signIn } = useAuthActions();
+  const router = useRouter();
+
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget as HTMLFormElement);
+    formData.set("flow", "signIn");
+
+    try {
+      await signIn("password", formData);
+      // Redirect to a different page or show a success message
+      router.push("/bazaar");
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -25,18 +40,12 @@ export default function page() {
         <CardHeader>
           <CardTitle className="text-2xl">Login to your account</CardTitle>
         </CardHeader>
-        <CardContent>
-          <form
-            action={async (formData) => {
-              //   "use server";
-              //   await login(formData);
-              //   redirect("/bazaar");
-            }}
-          >
+        <form onSubmit={handleLogin}>
+          <CardContent>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" required />
+                <Input id="email" type="email" name="email" required />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
@@ -48,27 +57,27 @@ export default function page() {
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" name="password" required />
               </div>
             </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <div className="self-start">
-            <Link
-              href="/signup"
-              className="text-sm underline-offset-4 hover:underline"
-            >
-              Don&apos;t Have an account?
-            </Link>
-          </div>
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-          <Button variant="outline" className="w-full">
-            Login with Google
-          </Button>
-        </CardFooter>
+          </CardContent>
+          <CardFooter className="flex-col gap-2 mt-6">
+            <div className="self-start">
+              <Link
+                href="/signup"
+                className="text-sm underline-offset-4 hover:underline"
+              >
+                Don&apos;t Have an account?
+              </Link>
+            </div>
+            <Button type="submit" className="w-full">
+              Login
+            </Button>
+            <Button variant="outline" className="w-full">
+              Login with Google
+            </Button>
+          </CardFooter>
+        </form>
       </Card>
     </div>
   );
