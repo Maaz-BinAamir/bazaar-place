@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: "placehold.co",
         pathname: "/*",
       },
+      {
+        protocol: "https",
+        hostname: "hip-gull-510.convex.cloud",
+        pathname: "/**",
+      },
     ],
     dangerouslyAllowSVG: true,
   },

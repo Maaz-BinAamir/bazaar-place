@@ -9,20 +9,42 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Page() {
+  const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
   const createPost = useMutation(api.posts.create);
+
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const form = e.currentTarget;
+
+    const postUrl = await generateUploadUrl();
+
+    const result = await fetch(postUrl, {
+      method: "POST",
+      headers: { "Content-Type": selectedImage!.type },
+      body: selectedImage,
+    });
+
+    const { storageId } = await result.json();
+
+    console.log("e.currentTarget:", e.currentTarget);
+    console.log("Is form?", e.currentTarget instanceof HTMLFormElement);
+
+    const formData = new FormData(form);
+    console.log("here");
     const postData = {
       title: formData.get("title") as string,
       description: formData.get("description") as string,
       location: formData.get("location") as string,
       price: parseFloat(formData.get("price") as string),
+      image: storageId,
     };
 
     console.log("Creating post with data:", postData);
@@ -37,6 +59,7 @@ export default function Page() {
     } catch (error) {
       console.error("Error creating post:", error);
     }
+    setSelectedImage(null);
   };
 
   return (
@@ -49,6 +72,12 @@ export default function Page() {
         className="flex flex-col max-w-[800px] justify-center mx-auto m-4 px-4 space-y-2"
         onSubmit={handleSubmit}
       >
+        <Input
+          type="file"
+          accept="image/*"
+          onChange={(event) => setSelectedImage(event.target.files![0])}
+        />
+
         <Label htmlFor="title">Title</Label>
         <Input id="title" name="title" />
 

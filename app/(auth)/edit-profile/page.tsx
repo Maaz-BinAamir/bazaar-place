@@ -46,7 +46,7 @@ export default function SignUpPage() {
     <div className="flex justify-center items-center h-screen">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Complete Signing Up</CardTitle>
+          <CardTitle className="text-2xl">Details</CardTitle>
         </CardHeader>
         <form onSubmit={handleSignUp}>
           <CardContent>

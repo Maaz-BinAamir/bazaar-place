@@ -7,7 +7,7 @@ export default defineSchema({
   posts: defineTable({
     title: v.string(),
     description: v.string(),
-    image: v.string(),
+    image: v.id("_storage"),
     author_id: v.id("users"),
     location: v.string(),
     price: v.number(),
