@@ -8,15 +8,7 @@ import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import {
-  ArrowLeft,
-  MapPin,
-  DollarSign,
-  User,
-  Mail,
-  MessageCircle,
-  Eye,
-} from "lucide-react";
+import { ArrowLeft, MapPin, MessageCircle } from "lucide-react";
 
 import { Id } from "@/convex/_generated/dataModel";
 
@@ -30,9 +22,7 @@ export default function Page() {
     id ? { id: id as Id<"posts"> } : "skip"
   );
 
-  console.log("Post data:", post);
-
-  if (post === undefined) {
+  if (!post) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-gray-900">
         <div className="max-w-6xl mx-auto px-4 py-8">
@@ -142,7 +132,8 @@ export default function Page() {
                 <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                   <Image
                     src={
-                      post.author?.profile_picture || "https://placehold.co/40x40"
+                      post.author?.profile_picture ||
+                      "https://placehold.co/40x40"
                     }
                     alt={post.author?.name}
                     width={32}
@@ -178,9 +169,6 @@ export default function Page() {
             {/* Price Card */}
             <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-xl">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
-                </div>
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Price

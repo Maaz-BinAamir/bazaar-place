@@ -14,10 +14,8 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 
-export default function Posts() {
-  const posts = useQuery(api.posts.get);
-
-  console.log("Posts:", posts);
+export default function Posts({ query }: { query: string }) {
+  const posts = useQuery(api.posts.get, { query: query });
 
   // Show skeleton loader while posts are loading
   if (!posts) {
@@ -44,6 +42,17 @@ export default function Posts() {
             </CardFooter>
           </Card>
         ))}
+      </div>
+    );
+  }
+
+  if (posts.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <h2 className="text-3xl font-semibold mb-4">No posts found</h2>
+        <p className="text-muted-foreground">
+          Try adjusting your search or filter to find what you're looking for.
+        </p>
       </div>
     );
   }

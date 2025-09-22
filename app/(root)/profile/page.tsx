@@ -7,8 +7,6 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft,
   MapPin,
@@ -17,13 +15,9 @@ import {
   User,
   Grid3X3,
   List,
-  Calendar,
-  Star,
   MessageCircle,
   Share2,
-  MoreHorizontal,
   ShoppingBag,
-  DollarSign,
 } from "lucide-react";
 
 import { Id } from "@/convex/_generated/dataModel";
@@ -39,9 +33,6 @@ export default function UserProfilePage() {
     api.posts.getByAuthorId,
     user?._id ? { authorId: user?._id as Id<"users"> } : "skip"
   );
-
-  console.log("User data:", user);
-  console.log("User posts:", userPosts);
 
   if (!user || !userPosts) {
     return (
@@ -314,7 +305,7 @@ export default function UserProfilePage() {
                         ? "bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl border border-gray-200 dark:border-gray-700"
                         : "bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 flex items-center space-x-4"
                     }`}
-                    onClick={() => router.push(`/post/${post._id}`)}
+                    onClick={() => router.push(`/bazaar/${post._id}`)}
                   >
                     {viewMode === "grid" ? (
                       <>

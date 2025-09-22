@@ -1,10 +1,13 @@
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
+
+import { Button } from "@/components/ui/button";
+
+import SearchBar from "./SearchBar";
 
 export async function StaticTasks() {}
 import LogoutButton from "@/components/LogoutButton";
@@ -17,8 +20,6 @@ export default async function Navbar() {
       token: await convexAuthNextjsToken(),
     }
   );
-
-  console.log("Current user:", user);
 
   return (
     <nav className="bg-primary text-primary-foreground flex justify-between p-4 items-center">
@@ -36,6 +37,8 @@ export default async function Navbar() {
           </p>
         </Link>
       </div>
+
+      <SearchBar />
 
       <div className="flex pr-4 space-x-2 px-2 items-center">
         <Link href="/create-post">

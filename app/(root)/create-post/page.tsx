@@ -34,11 +34,8 @@ export default function Page() {
 
     const { storageId } = await result.json();
 
-    console.log("e.currentTarget:", e.currentTarget);
-    console.log("Is form?", e.currentTarget instanceof HTMLFormElement);
 
     const formData = new FormData(form);
-    console.log("here");
     const postData = {
       title: formData.get("title") as string,
       description: formData.get("description") as string,
@@ -47,12 +44,8 @@ export default function Page() {
       image: storageId,
     };
 
-    console.log("Creating post with data:", postData);
-
     try {
       const id = await createPost({ post: postData });
-
-      console.log("Post created with ID:", id);
 
       // redirect to bazaar
       router.push("/bazaar");

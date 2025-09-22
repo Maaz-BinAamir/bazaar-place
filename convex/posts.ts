@@ -4,10 +4,32 @@ import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const get = query({
-  args: {},
-  handler: async (ctx) => {
+  args: { query: v.optional(v.string()) },
+  handler: async (ctx, args) => {
     const posts = await ctx.db.query("posts").collect();
-    const enriched = await Promise.all(
+    if (args.query) {
+      const lowerQuery = args.query.toLowerCase();
+      const filteredPosts = posts.filter(
+        (post) =>
+          post.title.toLowerCase().includes(lowerQuery) ||
+          post.description.toLowerCase().includes(lowerQuery) ||
+          post.location.toLowerCase().includes(lowerQuery)
+      );
+      return await Promise.all(
+        filteredPosts.map(async (post) => {
+          const author = await ctx.db.get(post.author_id as Id<"users">);
+          return {
+            ...post,
+            image: (await ctx.storage.getUrl(post.image)) as string,
+            author: author
+              ? { name: author.username, email: author.email }
+              : null,
+          };
+        })
+      );
+    }
+
+    return await Promise.all(
       posts.map(async (post) => {
         const author = await ctx.db.get(post.author_id as Id<"users">);
         return {
@@ -19,7 +41,6 @@ export const get = query({
         };
       })
     );
-    return enriched;
   },
 });
 
@@ -55,6 +76,7 @@ export const getById = query({
     const author = await ctx.db.get(post.author_id as Id<"users">);
     return {
       ...post,
+      image: (await ctx.storage.getUrl(post.image)) as string,
       author: author
         ? {
             name: author.username,

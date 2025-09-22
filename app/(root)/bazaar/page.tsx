@@ -1,13 +1,16 @@
 "use client";
 
-import React from "react";
+import { useSearchParams } from "next/navigation";
 
 import Posts from "@/components/Posts";
 
 export default function page() {
+  const params = useSearchParams();
+  const query = params.get("q") || "";
+
   return (
     <>
-      <Posts />
+      <Posts query={query} />
     </>
   );
 }

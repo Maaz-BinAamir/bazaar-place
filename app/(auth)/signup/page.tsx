@@ -26,7 +26,6 @@ export default function SignUpPage() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     formData.set("flow", "signUp");
-    console.log("Form data:", formData);
 
     const data = {
       username: (formData.get("username") as string) || "",
@@ -34,7 +33,6 @@ export default function SignUpPage() {
       password: (formData.get("password") as string) || "",
       flow: "signUp",
     };
-    console.log("Sign-up data:", data);
 
     try {
       setIsLoading(true);
