@@ -15,10 +15,12 @@ import { Label } from "@/components/ui/label";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function LoginPage() {
   const { signIn } = useAuthActions();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -26,11 +28,14 @@ export default function LoginPage() {
     formData.set("flow", "signIn");
 
     try {
+      setIsLoading(true);
       await signIn("password", formData);
       // Redirect to a different page or show a success message
       router.push("/bazaar");
     } catch (error) {
       console.error("Login failed:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -70,8 +75,8 @@ export default function LoginPage() {
                 Don&apos;t Have an account?
               </Link>
             </div>
-            <Button type="submit" className="w-full">
-              Login
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Logging In..." : "Login"}
             </Button>
             <Button variant="outline" className="w-full">
               Login with Google

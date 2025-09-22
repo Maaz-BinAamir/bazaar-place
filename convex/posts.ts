@@ -42,3 +42,32 @@ export const create = mutation({
     return newPostId;
   },
 });
+
+export const getById = query({
+  args: { id: v.id("posts") },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.id);
+    if (!post) return null;
+    const author = await ctx.db.get(post.author_id as Id<"users">);
+    return {
+      ...post,
+      author: author
+        ? {
+            name: author.username,
+            email: author.email,
+            profile_picture: author.profile_picture,
+          }
+        : null,
+    };
+  },
+});
+
+export const getByAuthorId = query({
+  args: { authorId: v.id("users") },
+  handler: async (ctx, args) => {
+    const allPosts = await ctx.db.query("posts").collect();
+    const posts = allPosts.filter((post) => post.author_id === args.authorId);
+    console.log("Posts by author:", posts);
+    return posts;
+  },
+});

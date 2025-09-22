@@ -15,8 +15,10 @@ import { Label } from "@/components/ui/label";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function SignUpPage() {
+  const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuthActions();
   const router = useRouter();
 
@@ -35,11 +37,14 @@ export default function SignUpPage() {
     console.log("Sign-up data:", data);
 
     try {
+      setIsLoading(true);
       await signIn("password", formData);
       // Redirect to a different page or show a success message
       router.push("/bazaar");
     } catch (error) {
       console.error("Sign-up failed:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -75,8 +80,8 @@ export default function SignUpPage() {
                 Already have an account?
               </Link>
             </div>
-            <Button type="submit" className="w-full">
-              Sign Up
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Signing Up..." : "Sign Up"}
             </Button>
           </CardFooter>
         </form>

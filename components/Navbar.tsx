@@ -31,24 +31,27 @@ export default async function Navbar() {
             height={50}
             className="mr-2"
           />
-          <p className="invisible sm:text-3xl sm:visible font-sans">BazaarPlace</p>
+          <p className="invisible sm:text-3xl sm:visible font-sans">
+            BazaarPlace
+          </p>
         </Link>
       </div>
 
       <div className="flex pr-4 space-x-2 px-2 items-center">
-        <p className="invisible sm:visible">{user?.username}</p>
-        <Image
-          src={user?.profile_picture || "https://placehold.co/40x40"}
-          alt="Profile Picture"
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
         <Link href="/create-post">
           <Button variant={"secondary"}>create</Button>
         </Link>
 
         <LogoutButton />
+        <Link href="/profile">
+          <Image
+            src={user?.profile_picture || "https://placehold.co/40x40"}
+            alt="Profile Picture"
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+        </Link>
       </div>
     </nav>
   );
