@@ -55,12 +55,6 @@ export default function LoginPage() {
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
                 </div>
                 <Input id="password" type="password" name="password" required />
               </div>
@@ -78,11 +72,21 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Logging In..." : "Login"}
             </Button>
-            <Button variant="outline" className="w-full">
-              Login with Google
-            </Button>
           </CardFooter>
         </form>
+        <div className="px-6 pb-4">
+          <Button
+            onClick={() => {
+              signIn("google", {
+                redirectTo: "/api/auth/callback/google",
+              });
+            }}
+            className="w-full"
+            variant="outline"
+          >
+            Login with Google
+          </Button>
+        </div>
       </Card>
     </div>
   );

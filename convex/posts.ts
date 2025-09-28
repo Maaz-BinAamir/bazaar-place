@@ -6,32 +6,22 @@ import { v } from "convex/values";
 export const get = query({
   args: { query: v.optional(v.string()) },
   handler: async (ctx, args) => {
-    const posts = await ctx.db.query("posts").collect();
+    let posts = await ctx.db.query("posts").collect();
+
+    // Apply filtering if query exists
     if (args.query) {
       const lowerQuery = args.query.toLowerCase();
-      const filteredPosts = posts.filter(
+      posts = posts.filter(
         (post) =>
           post.title.toLowerCase().includes(lowerQuery) ||
           post.description.toLowerCase().includes(lowerQuery) ||
           post.location.toLowerCase().includes(lowerQuery)
       );
-      return await Promise.all(
-        filteredPosts.map(async (post) => {
-          const author = await ctx.db.get(post.author_id as Id<"users">);
-          return {
-            ...post,
-            image: (await ctx.storage.getUrl(post.image)) as string,
-            author: author
-              ? { name: author.username, email: author.email }
-              : null,
-          };
-        })
-      );
     }
 
-    return await Promise.all(
+    return Promise.all(
       posts.map(async (post) => {
-        const author = await ctx.db.get(post.author_id as Id<"users">);
+        const author = await ctx.db.get(post.author as Id<"users">);
         return {
           ...post,
           image: (await ctx.storage.getUrl(post.image)) as string,
@@ -46,22 +36,19 @@ export const get = query({
 
 export const create = mutation({
   args: {
-    post: v.object({
-      title: v.string(),
-      description: v.string(),
-      location: v.string(),
-      price: v.number(),
-      image: v.id("_storage"),
-    }),
+    title: v.string(),
+    description: v.string(),
+    location: v.string(),
+    price: v.number(),
+    image: v.id("_storage"),
   },
   handler: async (ctx, args) => {
     // const image = "https://placehold.co/600x400";
     // const authorId = "jh78n0qn4vjs44djzmhe3j69rh7mebkf" as Id<"users">;
     const authorId = (await getAuthUserId(ctx)) as Id<"users">;
     const newPostId = await ctx.db.insert("posts", {
-      ...args.post,
-      // image,
-      author_id: authorId,
+      ...args,
+      author: authorId,
       status: "available",
     });
     return newPostId;
@@ -73,41 +60,33 @@ export const getById = query({
   handler: async (ctx, args) => {
     const post = await ctx.db.get(args.id);
     if (!post) return null;
-    const author = await ctx.db.get(post.author_id as Id<"users">);
+    const author = await ctx.db.get(post.author as Id<"users">);
+    const isAuthor = (await getAuthUserId(ctx)) === post.author;
     return {
       ...post,
       image: (await ctx.storage.getUrl(post.image)) as string,
       author: author
         ? {
+            _id: author._id,
             name: author.username,
             email: author.email,
             profile_picture: author.profile_picture,
           }
         : null,
+      isAuthor,
     };
-  },
-});
-
-export const getByAuthorId = query({
-  args: { authorId: v.id("users") },
-  handler: async (ctx, args) => {
-    const allPosts = await ctx.db.query("posts").collect();
-    const posts = allPosts.filter((post) => post.author_id === args.authorId);
-    console.log("Posts by author:", posts);
-    const enriched = await Promise.all(
-      posts.map(async (post) => {
-        return {
-          ...post,
-          image: (await ctx.storage.getUrl(post.image)) as string,
-        };
-      })
-    );
-    return enriched;
   },
 });
 
 export const generateUploadUrl = mutation({
   handler: async (ctx) => {
     return await ctx.storage.generateUploadUrl();
+  },
+});
+
+export const markAsSold = mutation({
+  args: { id: v.id("posts") },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { status: "sold" });
   },
 });

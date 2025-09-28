@@ -3,7 +3,7 @@
 import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +21,28 @@ export default function Page() {
     api.posts.getById,
     id ? { id: id as Id<"posts"> } : "skip"
   );
+
+  const markAsSold = useMutation(api.posts.markAsSold);
+
+  if (post === null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-gray-900 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Button variant="ghost" onClick={() => router.back()}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <div className="text-6xl">🔍</div>
+          <h2 className="text-2xl font-semibold text-gray-600 dark:text-gray-400">
+            Post not found
+          </h2>
+          <p className="text-gray-500 dark:text-gray-500">
+            The post you're looking for doesn't exist or has been removed.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
@@ -46,26 +68,6 @@ export default function Page() {
               <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl" />
             </div>
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (post === null) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-gray-900 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Button variant="ghost" onClick={() => router.back()}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <div className="text-6xl">🔍</div>
-          <h2 className="text-2xl font-semibold text-gray-600 dark:text-gray-400">
-            Post not found
-          </h2>
-          <p className="text-gray-500 dark:text-gray-500">
-            The post you're looking for doesn't exist or has been removed.
-          </p>
         </div>
       </div>
     );
@@ -182,20 +184,37 @@ export default function Page() {
               <Separator className="mb-6 bg-gray-200 dark:bg-gray-600" />
 
               {/* Action Buttons */}
-              <div className="space-y-3">
-                <Button className="w-full border-0 h-12 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
-                  <MessageCircle className="w-5 h-5 mr-2" />
-                  Contact Seller
-                </Button>
+              {post.isAuthor ? (
+                <>
+                  <Button
+                    className="w-full border-0 h-12 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
+                    onClick={() => {
+                      if (post.status === "sold") return;
+                      markAsSold({ id: post._id });
+                    }}
+                  >
+                    {post.status === "available" ? "Mark as Sold" : "Sold"}
+                  </Button>
+                </>
+              ) : (
+                <div className="space-y-3">
+                  <Button
+                    className="w-full border-0 h-12 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
+                    onClick={() => router.push(`/chat?newFromPost=${post._id}`)}
+                  >
+                    <MessageCircle className="w-5 h-5 mr-2" />
+                    Contact Seller
+                  </Button>
 
-                <Button
-                  variant="outline"
-                  className="w-full h-12 border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
-                  onClick={() => router.push(`/bazaar`)}
-                >
-                  Browse More Items
-                </Button>
-              </div>
+                  <Button
+                    variant="outline"
+                    className="w-full h-12 border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
+                    onClick={() => router.push(`/bazaar`)}
+                  >
+                    Browse More Items
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Additional Info */}

@@ -1,25 +1,26 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 
-import { fetchQuery } from "convex/nextjs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+import { User } from "lucide-react";
+
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 
 import { Button } from "@/components/ui/button";
 
-import SearchBar from "./SearchBar";
+import SearchBar from "./search-bar";
 
-export async function StaticTasks() {}
-import LogoutButton from "@/components/LogoutButton";
+import LogoutButton from "@/components/logout-button";
 
-export default async function Navbar() {
-  const user = await fetchQuery(
-    api.users.currentUser,
-    {},
-    {
-      token: await convexAuthNextjsToken(),
-    }
-  );
+export default function Navbar() {
+  const user = useQuery(api.users.currentUser);
+
+  const initials =
+    `${user?.first_name?.[0] || ""}${user?.last_name?.[0] || ""}`.toUpperCase();
 
   return (
     <nav className="bg-primary text-primary-foreground flex justify-between p-4 items-center">
@@ -47,13 +48,12 @@ export default async function Navbar() {
 
         <LogoutButton />
         <Link href="/profile">
-          <Image
-            src={user?.profile_picture || "https://placehold.co/40x40"}
-            alt="Profile Picture"
-            width={40}
-            height={40}
-            className="rounded-full"
-          />
+          <Avatar className="h-10 w-10 border-2 border-primary">
+            <AvatarImage src={user?.profile_picture ?? undefined} />
+            <AvatarFallback className="bg-muted text-primary text-lg font-semibold">
+              {initials || <User className="h-8 w-8" />}
+            </AvatarFallback>
+          </Avatar>
         </Link>
       </div>
     </nav>
