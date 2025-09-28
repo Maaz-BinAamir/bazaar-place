@@ -16,7 +16,7 @@ import PostsSkeleton from "./skeletons/posts";
 
 import Link from "next/link";
 
-export function Posts({ query }: { query: string }) {
+export default function Posts({ query }: { query: string }) {
   const posts = useQuery(api.posts.get, { query: query });
 
   if (!posts) {
