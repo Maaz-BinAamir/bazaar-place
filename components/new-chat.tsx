@@ -61,6 +61,8 @@ export default function NewChat({ postId }: { postId: string }) {
             <Image
               src={post?.image ?? ""}
               alt={post?.title ?? "Post Image"}
+              width={60}
+              height={60}
               className="h-15 w-15 rounded-full object-cover"
             />
             <div>

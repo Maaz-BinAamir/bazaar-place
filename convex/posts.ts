@@ -64,7 +64,7 @@ export const getById = query({
     const isAuthor = (await getAuthUserId(ctx)) === post.author;
     return {
       ...post,
-      image: (await ctx.storage.getUrl(post.image)) as string,
+      image: await ctx.storage.getUrl(post.image),
       author: author
         ? {
             _id: author._id,

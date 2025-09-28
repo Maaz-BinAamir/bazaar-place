@@ -46,6 +46,10 @@ export const getConversations = query({
           )
           .collect();
 
+        const profilePictureUrl = buyer?.profile_picture
+          ? await ctx.storage.getUrl(buyer.profile_picture)
+          : null;
+
         const numberOfUnread = unreadMessages.length;
 
         return {
@@ -54,12 +58,14 @@ export const getConversations = query({
           post: {
             title: post?.title,
             price: post?.price,
-            image: post?.image,
+            image: await ctx.storage.getUrl(post?.image!),
           },
           buyer: {
             id: buyer?._id,
             username: buyer?.username,
-            profile_picture: buyer?.profile_picture,
+            firstname: buyer?.first_name,
+            lastname: buyer?.last_name,
+            profile_picture: profilePictureUrl,
           },
           lastMessage: {
             content: lastMessageDoc?.content,

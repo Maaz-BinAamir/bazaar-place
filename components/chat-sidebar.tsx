@@ -61,20 +61,18 @@ export default function ChatSidebar({
                   <Image
                     src={conversation?.post?.image || ""}
                     alt={conversation?.post?.title || "Post Image"}
-                    className="h-12 w-12 rounded-lg object-cover"
+                    height={48}
+                    width={48}
+                    className="h-12 w-12 rounded-full object-cover"
                   />
                   <Avatar className="h-6 w-6 absolute -bottom-1 -right-1 border-2 border-background">
                     <AvatarImage
-                      src={
-                        conversation?.buyer?.profile_picture ||
-                        "/placeholder.svg"
-                      }
+                      src={conversation?.buyer?.profile_picture || ""}
                     />
                     <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                      {conversation?.buyer?.username
-                        ?.split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                      {`${conversation?.buyer?.firstname?.[0] || ""}${
+                        conversation?.buyer?.lastname?.[0] || ""
+                      }`.toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </div>
