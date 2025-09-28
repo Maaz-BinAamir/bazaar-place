@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import ChatSidebarSkeleton from "@/components/skeletons/chat-siderbar";
 
+import Image from "next/image";
+
 import { useRouter } from "next/navigation";
 
 import { useQuery } from "convex/react";
@@ -56,7 +58,7 @@ export default function ChatSidebar({
             >
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <img
+                  <Image
                     src={conversation?.post?.image || "/placeholder.svg"}
                     alt={conversation?.post?.title}
                     className="h-12 w-12 rounded-lg object-cover"

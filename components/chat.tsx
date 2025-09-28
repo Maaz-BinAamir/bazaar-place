@@ -9,6 +9,7 @@ import { Send, Paperclip, Check, CheckCheck, User } from "lucide-react";
 import ChatSkeleton from "@/components/skeletons/chat";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -82,7 +83,7 @@ export default function Chat({
       <div className="p-6 sm:pr-12 border-b border-border/50 backdrop-blur-sm bg-card/300">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3 ">
-            <img
+            <Image
               src={post.image}
               alt={post.title}
               className="h-15 w-15 rounded-full object-cover"
@@ -107,7 +108,7 @@ export default function Chat({
               onClick={() => router.push(`/profile/${recipient.id}`)}
             >
               <User className="h-3 w-3 mr-1" />
-              User's Profile
+              User&apos;s Profile
             </Button>
           </div>
         </div>
@@ -163,7 +164,7 @@ export default function Chat({
           {previewImage && (
             <div className="flex justify-end">
               <div className="max-w-xs lg:max-w-md">
-                <img
+                <Image
                   src={previewImage}
                   alt="preview"
                   className="rounded-lg max-w-full h-auto"

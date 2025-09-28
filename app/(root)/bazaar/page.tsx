@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 
 import Posts from "@/components/posts";
 
-export default function page() {
+export default function Page() {
   const params = useSearchParams();
   const query = params.get("q") || "";
 

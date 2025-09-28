@@ -27,13 +27,6 @@ export default function SignUpPage() {
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     formData.set("flow", "signUp");
 
-    const data = {
-      username: (formData.get("username") as string) || "",
-      email: (formData.get("email") as string) || "",
-      password: (formData.get("password") as string) || "",
-      flow: "signUp",
-    };
-
     try {
       setIsLoading(true);
       await signIn("password", formData);

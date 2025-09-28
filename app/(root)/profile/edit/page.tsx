@@ -33,7 +33,7 @@ export default function ProfilePage() {
     if (search && initialData?.username) {
       router.replace("/bazaar");
     }
-  }, [initialData]);
+  }, [initialData, router, search]);
 
   if (search && initialData?.username) {
     return null;

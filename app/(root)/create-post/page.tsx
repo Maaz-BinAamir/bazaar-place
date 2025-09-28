@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, X, DollarSign, MapPin, FileText, Type } from "lucide-react";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -132,7 +134,7 @@ export default function Page() {
                 <div className="border-2 border-dashed border-primary/30 rounded-lg p-6 transition-colors hover:border-primary/50">
                   {imagePreview ? (
                     <div className="relative">
-                      <img
+                      <Image
                         src={imagePreview || "/placeholder.svg"}
                         alt="Preview"
                         className="w-full h-48 object-cover rounded-lg"

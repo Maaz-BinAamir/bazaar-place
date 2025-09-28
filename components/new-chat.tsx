@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
+
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -9,12 +11,9 @@ import { ScrollArea } from "./ui/scroll-area";
 
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import type { Doc } from "@/convex/_generated/dataModel";
 
 import { Id } from "@/convex/_generated/dataModel";
 import { User, Paperclip, Send } from "lucide-react";
-
-type Message = Doc<"messages">;
 
 export default function NewChat({ postId }: { postId: string }) {
   const router = useRouter();
@@ -59,7 +58,7 @@ export default function NewChat({ postId }: { postId: string }) {
       <div className="p-6 pr-12 border-b border-border/50 backdrop-blur-sm bg-card/300">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3 ">
-            <img
+            <Image
               src={post?.image}
               alt={post?.title}
               className="h-15 w-15 rounded-full object-cover"
@@ -84,7 +83,7 @@ export default function NewChat({ postId }: { postId: string }) {
               onClick={() => router.push(`/profile/${post?.author?._id}`)}
             >
               <User className="h-3 w-3 mr-1" />
-              User's Profile
+              User&apos;s Profile
             </Button>
           </div>
         </div>

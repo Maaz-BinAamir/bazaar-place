@@ -55,7 +55,7 @@ export default function UserProfile({ id }: { id?: string }) {
             User not found
           </h2>
           <p className="text-gray-500 dark:text-gray-500">
-            The user profile you're looking for doesn't exist.
+            The user profile you&apos;re looking for doesn&apos;t exist.
           </p>
         </div>
       </div>
@@ -129,7 +129,7 @@ export default function UserProfile({ id }: { id?: string }) {
 
                   await navigator.clipboard.writeText(url);
                   toast.success("Link copied to clipboard!");
-                } catch (e) {
+                } catch (error) {
                   toast.error("Failed to copy link");
                 }
               }}
@@ -263,7 +263,7 @@ export default function UserProfile({ id }: { id?: string }) {
                   No listings yet
                 </h3>
                 <p className="text-gray-500 dark:text-gray-500">
-                  This user hasn't posted any items for sale.
+                  This user hasn&apos;t posted any items for sale.
                 </p>
               </div>
             ) : (

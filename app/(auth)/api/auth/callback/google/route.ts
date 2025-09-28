@@ -4,8 +4,6 @@ import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import { api } from "@/convex/_generated/api";
 
 export async function GET(req: NextRequest) {
-  const res = NextResponse.next();
-
   const user = await fetchQuery(
     api.users.currentUser,
     {},

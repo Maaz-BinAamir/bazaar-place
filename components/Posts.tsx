@@ -28,7 +28,7 @@ export default function Posts({ query }: { query: string }) {
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <h2 className="text-3xl font-semibold mb-4">No posts found</h2>
         <p className="text-muted-foreground">
-          Try adjusting your search or filter to find what you're looking for.
+          Try adjusting your search or filter to find what you&apos;re looking for.
         </p>
       </div>
     );
