@@ -1,17 +1,17 @@
 import ChatSidebar from "@/components/chat-sidebar";
 
-export default function ChatLayout({
+export default async function ChatLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id: conversationId } = params;
+  const { id: conversationId } = await params;
 
   return (
     <div className="flex h-full bg-background">
-      {/* Sidebar */}
+    {/* Sidebar */}
       <ChatSidebar conversation_id={conversationId} />
       {children}
     </div>

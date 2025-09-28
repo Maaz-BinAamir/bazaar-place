@@ -137,7 +137,7 @@ export default function Page() {
                       post.author?.profile_picture ||
                       "https://placehold.co/40x40"
                     }
-                    alt={post.author?.name}
+                    alt={post.author.name || "author name"}
                     width={32}
                     height={32}
                     className="w-8 h-8 rounded-full"

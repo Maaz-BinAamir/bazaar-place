@@ -1,15 +1,14 @@
-
 import NewChat from "@/components/new-chat";
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
-  const newFromPost = searchParams.newFromPost;
+  const { newFromPost } = await searchParams;
 
   if (newFromPost) {
-   return <NewChat postId={newFromPost} />;
+    return <NewChat postId={newFromPost} />;
   }
 
   return (
