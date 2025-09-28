@@ -16,7 +16,7 @@ import SearchBar from "./search-bar";
 
 import LogoutButton from "@/components/logout-button";
 
-export default function Navbar() {
+export function Navbar() {
   const user = useQuery(api.users.currentUser);
 
   const initials =

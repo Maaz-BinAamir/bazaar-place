@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 
-import Posts from "@/components/posts";
+import { Posts } from "@/components/posts";
 
 export default function Page() {
   const params = useSearchParams();
