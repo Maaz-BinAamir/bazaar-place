@@ -11,7 +11,6 @@ export default async function ChatLayout({
 
   return (
     <div className="flex h-full bg-background">
-    {/* Sidebar */}
       <ChatSidebar conversation_id={conversationId} />
       {children}
     </div>

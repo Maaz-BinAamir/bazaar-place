@@ -59,8 +59,8 @@ export default function ChatSidebar({
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <Image
-                    src={conversation?.post?.image || "/placeholder.svg"}
-                    alt={conversation?.post?.title}
+                    src={conversation?.post?.image || ""}
+                    alt={conversation?.post?.title || "Post Image"}
                     className="h-12 w-12 rounded-lg object-cover"
                   />
                   <Avatar className="h-6 w-6 absolute -bottom-1 -right-1 border-2 border-background">

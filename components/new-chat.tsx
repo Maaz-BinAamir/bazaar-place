@@ -59,8 +59,8 @@ export default function NewChat({ postId }: { postId: string }) {
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3 ">
             <Image
-              src={post?.image}
-              alt={post?.title}
+              src={post?.image ?? ""}
+              alt={post?.title ?? "Post Image"}
               className="h-15 w-15 rounded-full object-cover"
             />
             <div>
