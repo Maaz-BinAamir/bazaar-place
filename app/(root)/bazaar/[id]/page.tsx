@@ -37,7 +37,8 @@ export default function Page() {
             Post not found
           </h2>
           <p className="text-gray-500 dark:text-gray-500">
-            The post you&apos;re looking for doesn&apos;t exist or has been removed.
+            The post you&apos;re looking for doesn&apos;t exist or has been
+            removed.
           </p>
         </div>
       </div>
@@ -108,7 +109,7 @@ export default function Page() {
             {/* Hero Image */}
             <div className="relative group overflow-hidden rounded-2xl shadow-2xl">
               <Image
-                src={post.image}
+                src={post.image || ""}
                 alt={post.title}
                 width={800}
                 height={500}
