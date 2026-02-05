@@ -58,7 +58,6 @@ export default function LoginPage() {
                   type="email" 
                   name="email" 
                   required 
-                  placeholder="hello@example.com"
                   className="h-12 bg-gray-50 border-2 border-transparent focus:bg-white focus:border-black focus:ring-0 transition-all font-medium rounded-xl"
                 />
               </div>

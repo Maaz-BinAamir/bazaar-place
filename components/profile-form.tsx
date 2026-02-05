@@ -1,27 +1,16 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
-
 import { useRouter } from "next/navigation";
-
 import { ArrowLeft, Upload, User, Phone, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
-
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -51,7 +40,6 @@ interface ProfileFormProps {
 export function ProfileForm({ initialData, mode }: ProfileFormProps) {
   const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
   const submitProfile = useMutation(api.users.updateProfile);
-
   const router = useRouter();
 
   const [profile_picture, setProfileImage] = useState<string | null>(null);
@@ -103,9 +91,7 @@ export function ProfileForm({ initialData, mode }: ProfileFormProps) {
     }
   };
 
-  const formData = watch();
-  const initials =
-    `${formData.first_name?.[0] || ""}${formData.last_name?.[0] || ""}`.toUpperCase();
+  watch();
 
   async function onSubmit(data: ProfileFormData) {
     const updatePayload: {
@@ -157,216 +143,159 @@ export function ProfileForm({ initialData, mode }: ProfileFormProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
-      <div className="mx-auto max-w-2xl">
-        <Card className="border-2  shadow-lg">
-          <CardHeader className="text-center pb-6">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </button>
-            <CardTitle className="text-2xl font-bold text-primary">
+    <div className="min-h-screen bg-[#FDFBF7] p-4 md:p-8">
+      <div className="mx-auto max-w-3xl">
+        <Button 
+          variant="ghost" 
+          onClick={() => router.back()} 
+          className="mb-6 pl-0 hover:bg-transparent hover:text-[#FF6B6B] transition-colors font-bold"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Profile
+        </Button>
+
+        <Card className="border-2 border-black/5 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden rounded-3xl">
+          <CardHeader className="text-center pb-6 bg-white border-b border-gray-100 p-8">
+            <CardTitle className="text-3xl font-black tracking-tight text-black mb-2">
               {mode === "edit" ? "Edit Profile" : "Create Profile"}
             </CardTitle>
-            <CardDescription className="text-muted-foreground">
+            <CardDescription className="text-base text-gray-500">
               {mode === "edit"
-                ? "Update your personal information and profile picture"
-                : "Create your profile by providing the necessary information"}
+                ? "Update your personal details and make your profile stand out."
+                : "Let's get you set up with a profile on BazaarPlace."}
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-8">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Profile Picture Section */}
-              <div className="space-y-4">
-                <Label className="text-sm font-semibold text-primary flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Profile Picture
-                </Label>
-
-                <div className="flex flex-col items-center space-y-4">
-                  <Avatar className="h-24 w-24 border-2 border-primary">
-                    <AvatarImage
-                      src={
-                        profile_picture ??
-                        initialData?.profile_picture ??
-                        undefined
-                      }
-                    />
-                    <AvatarFallback className="bg-muted text-primary text-lg font-semibold">
-                      {initials || <User className="h-8 w-8" />}
-                    </AvatarFallback>
-                  </Avatar>
-
-                  <div
+          <CardContent className="p-8 bg-white">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+              
+              {/* Profile Picture */}
+              <div className="space-y-4 text-center">
+                 <div className="relative inline-block group">
+                    <Avatar className="h-32 w-32 border-4 border-white shadow-xl bg-white mx-auto">
+                       <AvatarImage 
+                          src={profile_picture ?? initialData?.profile_picture ?? undefined} 
+                          className="object-cover"
+                       />
+                        <AvatarFallback className="bg-[#FFD93D] text-black text-3xl font-black">
+                           <User className="h-12 w-12" />
+                        </AvatarFallback>
+                    </Avatar>
+                    
+                    <label 
+                       htmlFor="picture-upload"
+                       className="absolute bottom-0 right-0 w-10 h-10 bg-black text-white rounded-full flex items-center justify-center cursor-pointer hover:bg-[#FF6B6B] transition-colors border-4 border-white shadow-sm"
+                    >
+                       <Upload className="w-4 h-4" />
+                    </label>
+                 </div>
+                 <div 
                     className={cn(
-                      "relative w-full max-w-sm border-2 border-dashed rounded-lg p-6 text-center transition-colors",
-                      dragActive
-                        ? "border-accent bg-accent/10"
-                        : " hover:border-accent hover:bg-accent/5"
+                       "hidden", // Hidden actual input, triggered by label above
+                       dragActive && "block fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
                     )}
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
                     onDragOver={handleDrag}
                     onDrop={handleDrop}
-                  >
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        e.target.files?.[0] &&
-                        handleImageUpload(e.target.files[0])
-                      }
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    />
-                    <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground">
-                      <span className="font-medium text-primary">
-                        Click to upload
-                      </span>{" "}
-                      or drag and drop
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      PNG, JPG up to 10MB
-                    </p>
-                  </div>
-                </div>
+                 >
+                    {/* Only visible on drag */}
+                    <div className="bg-white p-10 rounded-3xl text-center">
+                       <Upload className="w-12 h-12 mx-auto mb-4 text-[#FF6B6B]" />
+                       <h3 className="font-bold text-xl">Drop image here</h3>
+                    </div>
+                 </div>
+                 
+                 <input
+                    id="picture-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+                 />
+                 
+                 <p className="text-sm text-gray-400 font-medium">
+                    Allowed: JPG, PNG, GIF. Max size: 10MB
+                 </p>
               </div>
 
-              {/* Username */}
-              {mode === "create" && (
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="username"
-                    className="text-sm font-semibold text-primary"
-                  >
-                    Username
-                  </Label>
-                  <Input
-                    id="username"
-                    {...register("username", {
-                      required: "Username is required",
-                    })}
-                    className="border-2  focus:border-accent"
-                    placeholder="Enter your username"
-                  />
-                  {errors.username && (
-                    <p className="text-sm text-destructive">
-                      {errors.username.message}
-                    </p>
-                  )}
-                </div>
-              )}
+              <div className="grid gap-8">
+                 {mode === "create" && (
+                   <div className="space-y-3">
+                     <Label htmlFor="username" className="text-base font-bold">Username</Label>
+                     <Input
+                       id="username"
+                       {...register("username", { required: "Username is required" })}
+                       className="h-12 bg-gray-50 border-transparent focus:bg-white focus:border-black/20 focus:ring-0 transition-all font-medium"
+                       placeholder="johndoe"
+                     />
+                     {errors.username && <p className="text-sm text-[#FF6B6B] font-bold">{errors.username.message}</p>}
+                   </div>
+                 )}
 
-              {/* Name Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="first_name"
-                    className="text-sm font-semibold text-primary"
-                  >
-                    First Name
-                  </Label>
-                  <Input
-                    id="first_name"
-                    {...register("first_name", {
-                      required: "First name is required",
-                    })}
-                    className="border-2  focus:border-accent"
-                    placeholder="Enter your first name"
-                  />
-                  {errors.first_name && (
-                    <p className="text-sm text-destructive">
-                      {errors.first_name.message}
-                    </p>
-                  )}
-                </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                       <Label htmlFor="first_name" className="text-base font-bold">First Name</Label>
+                       <Input
+                          id="first_name"
+                          {...register("first_name", { required: "First name is required" })}
+                          className="h-12 bg-gray-50 border-transparent focus:bg-white focus:border-black/20 focus:ring-0 transition-all font-medium"
+                          placeholder="John"
+                       />
+                       {errors.first_name && <p className="text-sm text-[#FF6B6B] font-bold">{errors.first_name.message}</p>}
+                    </div>
 
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="last_name"
-                    className="text-sm font-semibold text-primary"
-                  >
-                    Last Name
-                  </Label>
-                  <Input
-                    id="last_name"
-                    {...register("last_name", {
-                      required: "Last name is required",
-                    })}
-                    className="border-2  focus:border-accent"
-                    placeholder="Enter your last name"
-                  />
-                  {errors.last_name && (
-                    <p className="text-sm text-destructive">
-                      {errors.last_name.message}
-                    </p>
-                  )}
-                </div>
+                    <div className="space-y-3">
+                       <Label htmlFor="last_name" className="text-base font-bold">Last Name</Label>
+                       <Input
+                          id="last_name"
+                          {...register("last_name", { required: "Last name is required" })}
+                          className="h-12 bg-gray-50 border-transparent focus:bg-white focus:border-black/20 focus:ring-0 transition-all font-medium"
+                          placeholder="Doe"
+                       />
+                       {errors.last_name && <p className="text-sm text-[#FF6B6B] font-bold">{errors.last_name.message}</p>}
+                    </div>
+                 </div>
+
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                       <Label htmlFor="phone" className="text-base font-bold flex items-center gap-2">
+                          <Phone className="w-4 h-4 text-gray-400" />
+                          Phone Number
+                       </Label>
+                       <Input
+                          id="phone"
+                          type="tel"
+                          {...register("phone", { pattern: { value: /^[+]?[1-9][\d]{0,15}$/, message: "Invalid phone number" } })}
+                          className="h-12 bg-gray-50 border-transparent focus:bg-white focus:border-black/20 focus:ring-0 transition-all font-medium"
+                          placeholder="+1 (555) 000-0000"
+                       />
+                       {errors.phone && <p className="text-sm text-[#FF6B6B] font-bold">{errors.phone.message}</p>}
+                    </div>
+
+                    <div className="space-y-3">
+                       <Label htmlFor="address" className="text-base font-bold flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-gray-400" />
+                          Address
+                       </Label>
+                       <Input
+                          id="address"
+                          {...register("address")}
+                          className="h-12 bg-gray-50 border-transparent focus:bg-white focus:border-black/20 focus:ring-0 transition-all font-medium"
+                          placeholder="123 Main St, City"
+                       />
+                       {errors.address && <p className="text-sm text-[#FF6B6B] font-bold">{errors.address.message}</p>}
+                    </div>
+                 </div>
               </div>
 
-              {/* Phone Field */}
-              <div className="space-y-2">
-                <Label
-                  htmlFor="phone"
-                  className="text-sm font-semibold text-primary flex items-center gap-2"
-                >
-                  <Phone className="h-4 w-4" />
-                  Phone Number
-                </Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  {...register("phone", {
-                    pattern: {
-                      value: /^[+]?[1-9][\d]{0,15}$/,
-                      message: "Please enter a valid phone number",
-                    },
-                  })}
-                  className="border-2  focus:border-accent"
-                  placeholder="Enter your phone number"
-                />
-                {errors.phone && (
-                  <p className="text-sm text-destructive">
-                    {errors.phone.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Address Field */}
-              <div className="space-y-2">
-                <Label
-                  htmlFor="address"
-                  className="text-sm font-semibold text-primary flex items-center gap-2"
-                >
-                  <MapPin className="h-4 w-4" />
-                  Address
-                </Label>
-                <Textarea
-                  id="address"
-                  {...register("address")}
-                  className="border-2  focus:border-accent min-h-[100px] resize-none"
-                  placeholder="Enter your full address"
-                />
-                {errors.address && (
-                  <p className="text-sm text-destructive">
-                    {errors.address.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Submit Button */}
-              <div className="pt-4">
+              <div className="pt-4 border-t border-gray-100">
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-accent hover:bg-accent/60 text-accent-foreground font-semibold py-3 text-base"
+                  className="w-full h-14 text-lg font-bold bg-black text-white hover:bg-[#FF6B6B] rounded-xl transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                 >
-                  {isSubmitting ? "Saving..." : "Save Profile"}
+                  {isSubmitting ? "Saving Changes..." : "Save Profile"}
                 </Button>
               </div>
             </form>

@@ -17,12 +17,11 @@ function SkeletonBox({ className }: { className?: string }) {
 export default function ChatSidebarSkeleton() {
   return (
     <div
-      className="hidden md:block w-100 border-r border-border/50 backdrop-blur-sm"
-      style={{ background: "var(--sidebar-bg)" }}
+      className="hidden md:flex flex-col w-80 lg:w-96 border-r-2 border-black bg-[#FDFBF7]"
     >
       {/* Header */}
-      <div className="p-6 border-b border-border/50">
-        <SkeletonBox className="h-6 w-40 rounded" />
+      <div className="p-6 border-b-2 border-black bg-white">
+        <SkeletonBox className="h-8 w-40 rounded bg-gray-200" />
       </div>
 
       {/* Conversations list */}
@@ -30,23 +29,23 @@ export default function ChatSidebarSkeleton() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="p-4 rounded-lg border border-border/30 bg-card/50"
+            className="p-4 border-2 border-black rounded-xl bg-white space-y-2"
           >
             <div className="flex items-center gap-3">
               {/* Image + avatar overlay */}
               <div className="relative">
-                <SkeletonBox className="h-12 w-12 rounded-lg" />
-                <SkeletonBox className="h-6 w-6 rounded-full absolute -bottom-1 -right-1 border-2 border-background" />
+                <SkeletonBox className="h-12 w-12 rounded-full border-2 border-black/10 bg-gray-200" />
+                <SkeletonBox className="h-6 w-6 rounded-full absolute -bottom-1 -right-1 border-2 border-white bg-gray-300" />
               </div>
 
               {/* Text section */}
               <div className="flex-1 min-w-0 space-y-2">
                 <div className="flex items-center justify-between">
-                  <SkeletonBox className="h-4 w-28 rounded" />
-                  <SkeletonBox className="h-3 w-10 rounded" />
+                  <SkeletonBox className="h-4 w-24 rounded bg-gray-200" />
+                  <SkeletonBox className="h-3 w-8 rounded bg-gray-200" />
                 </div>
-                <SkeletonBox className="h-3 w-16 rounded" />
-                <SkeletonBox className="h-3 w-40 rounded" />
+                <SkeletonBox className="h-3 w-16 rounded bg-gray-200" />
+                <SkeletonBox className="h-3 w-32 rounded bg-gray-200" />
               </div>
             </div>
           </div>

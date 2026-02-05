@@ -11,7 +11,7 @@ export const getConversations = query({
 
     const conversations = await ctx.db.query("conversations").collect();
     const userConversations = conversations.filter(
-      (c) => c.buyer === userId || c.seller === userId
+      (c) => c.buyer === userId || c.seller === userId,
     );
 
     return Promise.all(
@@ -22,11 +22,16 @@ export const getConversations = query({
           ctx.db.get(conversation.seller as Id<"users">),
         ]);
 
+        const otherUser = userId === conversation.buyer ? seller : buyer;
+        const otherUserProfileUrl = otherUser?.profile_picture
+          ? await ctx.storage.getUrl(otherUser.profile_picture)
+          : null;
+
         // Fetch last message
         const messages = await ctx.db
           .query("messages")
           .withIndex("by_conversation", (q) =>
-            q.eq("conversation", conversation._id)
+            q.eq("conversation", conversation._id),
           )
           .order("desc")
           .take(1);
@@ -36,13 +41,13 @@ export const getConversations = query({
         const unreadMessages = await ctx.db
           .query("messages")
           .withIndex("by_conversation", (q) =>
-            q.eq("conversation", conversation._id)
+            q.eq("conversation", conversation._id),
           )
           .filter((q) =>
             q.and(
               q.eq(q.field("read"), false),
-              q.neq(q.field("sender"), userId)
-            )
+              q.neq(q.field("sender"), userId),
+            ),
           )
           .collect();
 
@@ -58,7 +63,13 @@ export const getConversations = query({
           post: {
             title: post?.title,
             price: post?.price,
-            image: await ctx.storage.getUrl(post?.image!),
+            image: post?.image ? await ctx.storage.getUrl(post.image) : null,
+          },
+          otherUser: {
+            username: otherUser?.username,
+            first_name: otherUser?.first_name || "",
+            last_name: otherUser?.last_name || "",
+            profile_picture: otherUserProfileUrl,
           },
           buyer: {
             id: buyer?._id,
@@ -74,7 +85,7 @@ export const getConversations = query({
           },
           numberOfUnread,
         };
-      })
+      }),
     );
   },
 });
@@ -124,7 +135,7 @@ export const getMessages = query({
     const messages = await ctx.db
       .query("messages")
       .withIndex("by_conversation", (q) =>
-        q.eq("conversation", args.conversationId)
+        q.eq("conversation", args.conversationId),
       )
       .order("asc")
       .collect();

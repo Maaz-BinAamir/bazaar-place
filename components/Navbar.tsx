@@ -12,9 +12,6 @@ import LogoutButton from "@/components/logout-button";
 export default function Navbar() {
   const user = useQuery(api.users.currentUser);
 
-  const initials =
-    `${user?.first_name?.[0] || ""}${user?.last_name?.[0] || ""}`.toUpperCase();
-
   return (
     <nav className="sticky top-0 z-50 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-black/5 px-4 py-3 sm:px-6">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 sm:gap-8">
@@ -53,7 +50,7 @@ export default function Navbar() {
               <Avatar className="h-10 w-10 border-2 border-black relative bg-white transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5">
                 <AvatarImage src={user?.profile_picture ?? undefined} />
                 <AvatarFallback className="bg-[#FFD93D] text-black font-bold">
-                  {initials || <User className="h-5 w-5" />}
+                  <User className="h-5 w-5" />
                 </AvatarFallback>
               </Avatar>
             </Link>
