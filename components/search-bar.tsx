@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { Search } from "lucide-react";
-
 import { Input } from "@/components/ui/input";
 
 export default function SearchBar() {
@@ -17,14 +15,14 @@ export default function SearchBar() {
   };
 
   return (
-    <form className="relative w-full max-w-sm" onSubmit={handleSearch}>
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+    <form className="relative w-full group" onSubmit={handleSearch}>
+      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-[#FF6B6B] transition-colors h-5 w-5 pointer-events-none" />
       <Input
         type="search"
-        placeholder="Search..."
+        placeholder="Search for treasures..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="pl-9 bg-primary-foreground text-primary border-none focus-visible:ring-2 focus-visible:ring-primary"
+        className="w-full pl-12 pr-4 h-11 rounded-full bg-white border-2 border-black/5 hover:border-black/20 focus-visible:border-black focus-visible:ring-0 focus-visible:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] transition-all placeholder:text-gray-400 text-base"
       />
     </form>
   );

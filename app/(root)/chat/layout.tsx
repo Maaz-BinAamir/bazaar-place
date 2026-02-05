@@ -10,9 +10,11 @@ export default async function ChatLayout({
   const { id: conversationId } = await params;
 
   return (
-    <div className="flex h-full bg-background">
+    <div className="flex h-[calc(100vh-80px)] bg-[#FDFBF7] overflow-hidden">
       <ChatSidebar conversation_id={conversationId} />
-      {children}
+      <main className="flex-1 flex flex-col min-w-0 bg-[#FDFBF7] relative">
+        {children}
+      </main>
     </div>
   );
 }

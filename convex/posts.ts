@@ -26,7 +26,12 @@ export const get = query({
           ...post,
           image: (await ctx.storage.getUrl(post.image)) as string,
           author: author
-            ? { name: author.username, email: author.email }
+            ? {
+                name: author.username,
+                email: author.email,
+                first_name: author.first_name || "",
+                last_name: author.last_name || "",
+              }
             : null,
         };
       })
@@ -69,6 +74,8 @@ export const getById = query({
         ? {
             _id: author._id,
             name: author.username,
+            first_name: author.first_name || "",
+            last_name: author.last_name || "",
             email: author.email,
             profile_picture: author.profile_picture,
           }

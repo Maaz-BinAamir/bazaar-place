@@ -1,22 +1,18 @@
 "use client";
 
 import type React from "react";
-
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, X, DollarSign, MapPin, FileText, Type } from "lucide-react";
-
+import { Upload, X, DollarSign, MapPin, Type, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
@@ -44,10 +40,8 @@ type PostFormData = z.infer<typeof postSchema>;
 export default function Page() {
   const createPost = useMutation(api.posts.create);
   const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
-
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-
   const router = useRouter();
 
   const {
@@ -100,11 +94,9 @@ export default function Page() {
 
     try {
       await createPost({ ...postData });
-
       reset();
       setSelectedImage(null);
       setImagePreview(null);
-
       router.back();
     } catch (error) {
       console.error("Error creating post:", error);
@@ -113,177 +105,174 @@ export default function Page() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      <div className="max-w-2xl mx-auto p-6">
-        <Card className="border-primary/20 shadow-lg">
-          <CardHeader className="space-y-1 pb-6">
-            <CardTitle className="text-2xl font-semibold text-primary text-center">
-              Create New Post
+    <div className="min-h-screen py-10 px-4">
+      <div className="max-w-3xl mx-auto">
+        <Button 
+          variant="ghost" 
+          onClick={() => router.back()} 
+          className="mb-6 pl-0 hover:bg-transparent hover:text-[#FF6B6B] transition-colors font-bold"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Bazaar
+        </Button>
+
+        <Card className="border-2 border-black/5 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
+          <CardHeader className="bg-black text-white p-8">
+            <CardTitle className="text-3xl font-black tracking-tight">
+              Sell an Item
             </CardTitle>
-            <p className="text-muted-foreground text-center">
-              Share your product with the community
+            <p className="text-white/70">
+              Give your pre-loved items a new home.
             </p>
           </CardHeader>
 
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-foreground">
-                  Product Image
-                </Label>
-                <div className="border-2 border-dashed border-primary/30 rounded-lg p-6 transition-colors hover:border-primary/50">
+          <CardContent className="p-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+              {/* Image Upload */}
+              <div className="space-y-3">
+                <Label className="text-base font-bold">Photos</Label>
+                <div 
+                  className={`relative border-2 border-dashed rounded-2xl p-8 transition-all duration-200 text-center
+                    ${imagePreview ? 'border-transparent p-0 overflow-hidden' : 'border-gray-200 hover:border-[#FF6B6B] hover:bg-[#FF6B6B]/5 cursor-pointer'}
+                  `}
+                >
                   {imagePreview ? (
-                    <div className="relative">
+                    <div className="relative aspect-video w-full bg-gray-100 rounded-2xl overflow-hidden group">
                       <Image
-                        src={imagePreview || "/placeholder.svg"}
+                        src={imagePreview}
                         alt="Preview"
-                        className="w-full h-48 object-cover rounded-lg"
+                        fill
+                        className="object-cover"
                       />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="absolute top-2 right-2"
-                        onClick={removeImage}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center text-center text-muted-foreground">
-                      <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="image-upload"
-                          className="cursor-pointer"
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          onClick={removeImage}
+                          className="rounded-full w-12 h-12 p-0"
                         >
-                          <span className="text-primary hover:text-primary/80 font-medium">
-                            Click to upload
-                          </span>
-                          <span className="text-muted-foreground">
-                            {" "}
-                            or drag and drop
-                          </span>
-                        </Label>
-                        <p className="text-xs text-muted-foreground">
-                          PNG, JPG, GIF up to 10MB
-                        </p>
+                          <X className="h-5 w-5" />
+                        </Button>
                       </div>
                     </div>
+                  ) : (
+                    <div className="py-8">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                        <Upload className="w-8 h-8" />
+                      </div>
+                      <Label
+                        htmlFor="image-upload"
+                        className="cursor-pointer block"
+                      >
+                        <span className="block text-lg font-bold text-gray-900 mb-1">
+                          Click to upload photos
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          SVG, PNG, JPG or GIF (max. 10MB)
+                        </span>
+                      </Label>
+                      <Input
+                        id="image-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                    </div>
                   )}
-                  <Input
-                    id="image-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-6">
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="title"
-                    className="text-sm font-medium text-foreground flex items-center gap-2"
-                  >
-                    <Type className="h-4 w-4 text-primary" />
+              {/* Title & Price */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="md:col-span-2 space-y-3">
+                  <Label htmlFor="title" className="text-base font-bold flex items-center gap-2">
                     Title
                   </Label>
-                  <Input
-                    id="title"
-                    {...register("title")}
-                    placeholder="Enter product title"
-                    className="border-primary/30 focus:border-primary"
-                  />
+                  <div className="relative">
+                    <Type className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="title"
+                      {...register("title")}
+                      placeholder="What are you selling?"
+                      className="pl-10 h-12 bg-gray-50 border-transparent focus:bg-white focus:border-black/20 focus:ring-0 transition-all font-medium"
+                    />
+                  </div>
                   {errors.title && (
-                    <p className="text-sm text-destructive">
+                    <p className="text-sm text-[#FF6B6B] font-bold mt-1">
                       {errors.title.message}
                     </p>
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="description"
-                    className="text-sm font-medium text-foreground flex items-center gap-2"
-                  >
-                    <FileText className="h-4 w-4 text-primary" />
-                    Description
+                <div className="space-y-3">
+                  <Label htmlFor="price" className="text-base font-bold flex items-center gap-2">
+                    Price
                   </Label>
-                  <Textarea
-                    id="description"
-                    {...register("description")}
-                    placeholder="Describe your product in detail"
-                    className="border-primary/30 focus:border-primary min-h-[120px] resize-none"
-                  />
-                  {errors.description && (
-                    <p className="text-sm text-destructive">
-                      {errors.description.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="location"
-                      className="text-sm font-medium text-foreground flex items-center gap-2"
-                    >
-                      <MapPin className="h-4 w-4 text-primary" />
-                      Location
-                    </Label>
-                    <Input
-                      id="location"
-                      {...register("location")}
-                      placeholder="Enter location"
-                      className="border-primary/30 focus:border-primary"
-                    />
-                    {errors.location && (
-                      <p className="text-sm text-destructive">
-                        {errors.location.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="price"
-                      className="text-sm font-medium text-foreground flex items-center gap-2"
-                    >
-                      <DollarSign className="h-4 w-4 text-primary" />
-                      Price
-                    </Label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <Input
                       id="price"
                       {...register("price")}
                       placeholder="0.00"
-                      className="border-primary/30 focus:border-primary"
+                      className="pl-10 h-12 bg-gray-50 border-transparent focus:bg-white focus:border-black/20 focus:ring-0 transition-all font-mono font-medium"
                     />
-                    {errors.price && (
-                      <p className="text-sm text-destructive">
-                        {errors.price.message}
-                      </p>
-                    )}
                   </div>
+                  {errors.price && (
+                    <p className="text-sm text-[#FF6B6B] font-bold mt-1">
+                      {errors.price.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-6">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex-1 border-primary/30 text-primary hover:bg-primary/5 bg-transparent"
-                  onClick={() => router.back()}
-                >
-                  Cancel
-                </Button>
+              {/* Location */}
+              <div className="space-y-3">
+                <Label htmlFor="location" className="text-base font-bold flex items-center gap-2">
+                  Location
+                </Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="location"
+                    {...register("location")}
+                    placeholder="Where is the item located?"
+                    className="pl-10 h-12 bg-gray-50 border-transparent focus:bg-white focus:border-black/20 focus:ring-0 transition-all font-medium"
+                  />
+                </div>
+                {errors.location && (
+                  <p className="text-sm text-[#FF6B6B] font-bold mt-1">
+                    {errors.location.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Description */}
+              <div className="space-y-3">
+                <Label htmlFor="description" className="text-base font-bold">
+                  Description
+                </Label>
+                <Textarea
+                  id="description"
+                  {...register("description")}
+                  placeholder="Tell buyers about the condition, age, and any flaws..."
+                  className="min-h-[150px] resize-none p-4 bg-gray-50 border-transparent focus:bg-white focus:border-black/20 focus:ring-0 transition-all font-medium leading-relaxed"
+                />
+                {errors.description && (
+                  <p className="text-sm text-[#FF6B6B] font-bold mt-1">
+                    {errors.description.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-4">
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground"
+                  className="w-full h-14 text-lg font-bold bg-black text-white hover:bg-[#FF6B6B] rounded-xl transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                 >
-                  {isSubmitting ? "Creating Post..." : "Create Post"}
+                  {isSubmitting ? "Publishing..." : "Publish Listing"}
                 </Button>
               </div>
             </form>

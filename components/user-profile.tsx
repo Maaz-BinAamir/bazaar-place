@@ -1,31 +1,14 @@
 "use client";
 
 import { useState } from "react";
-
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  ArrowLeft,
-  MapPin,
-  Phone,
-  Mail,
-  User,
-  Grid3X3,
-  List,
-  MessageCircle,
-  Share2,
-  ShoppingBag,
-} from "lucide-react";
-
+import { ArrowLeft, MapPin, Share2, Grid3X3, List, MessageCircle, Store, Mail, Phone, User } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ProfilePageSkeleton } from "./skeletons/user-profile";
 
@@ -42,317 +25,208 @@ export default function UserProfile({ id }: { id?: string }) {
     return <ProfilePageSkeleton />;
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-gray-900 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Button variant="ghost" onClick={() => router.back()}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <div className="text-6xl">👤</div>
-          <h2 className="text-2xl font-semibold text-gray-600 dark:text-gray-400">
-            User not found
-          </h2>
-          <p className="text-gray-500 dark:text-gray-500">
-            The user profile you&apos;re looking for doesn&apos;t exist.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const displayName = user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.username;
 
+  const soldListings = posts?.filter((post) => post.status?.toLowerCase() === "sold")?.length || 0;
+  
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
-      case "available":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "sold":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
+      case "available": return "bg-green-100 text-green-800 border-green-200";
+      case "sold": return "bg-red-100 text-red-800 border-red-200";
+      case "pending": return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      default: return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
-  const initials =
-    `${user.first_name?.[0] || ""}${user.last_name?.[0] || ""}`.toUpperCase();
-
-  const displayName =
-    user.first_name && user.last_name
-      ? `${user.first_name} ${user.last_name}`
-      : user.username;
-
-  const activeListings =
-    posts?.filter((post) => post.status?.toLowerCase() === "available")
-      ?.length || 0;
-  const soldListings =
-    posts?.filter((post) => post.status?.toLowerCase() === "sold")?.length || 0;
-  const totalEarnings =
-    posts
-      ?.filter((post) => post.status?.toLowerCase() === "sold")
-      ?.reduce((sum, post) => sum + (post.price || 0), 0) || 0;
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-gray-900">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => router.back()}
-            className="hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all duration-200 backdrop-blur-sm"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <div className="flex items-center space-x-2">
-            {!id && (
-              <Button
-                variant="outline"
-                size="sm"
+    <div className="min-h-screen bg-[#FDFBF7] pb-20">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-12">
+        {/* Navigation */}
+        <div className="flex justify-between items-center mb-8">
+           <Button variant="ghost" onClick={() => router.back()} className="font-bold hover:bg-black/5 -ml-4">
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Back
+           </Button>
+           
+           <div className="flex gap-3">
+             {!id && (
+               <Button 
+                variant="outline" 
+                size="sm" 
                 onClick={() => router.push("/profile/edit")}
+                className="rounded-xl font-bold border-2 border-black hover:bg-[#FFD93D] hover:text-black transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]"
+               >
+                 <MessageCircle className="w-4 h-4 mr-2" />
+                 Edit Profile
+               </Button>
+             )}
+             <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-xl border-2 border-black hover:bg-[#FF6B6B] hover:text-white transition-all"
+                onClick={async () => {
+                  try {
+                    const url = id ? window.location.href : `${window.location.href}/${user._id}`;
+                    await navigator.clipboard.writeText(url);
+                    toast.success("Link copied!");
+                  } catch (_) {
+                    toast.error("Failed to copy link");
+                  }
+                }}
               >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Edit Profile
+                <Share2 className="w-4 h-4" />
               </Button>
-            )}
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={async () => {
-                try {
-                  const url = id
-                    ? window.location.href
-                    : `${window.location.href}/${user._id}`;
-
-                  await navigator.clipboard.writeText(url);
-                  toast.success("Link copied to clipboard!");
-                } catch (error) {
-                  toast.error("Failed to copy link");
-                }
-              }}
-            >
-              <Share2 className="w-4 h-4" />
-              Share
-            </Button>
-          </div>
+           </div>
         </div>
 
-        {/* Profile Header */}
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-3xl p-8 border border-gray-200 dark:border-gray-700 shadow-xl mb-8">
-          <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
-            {/* Profile Picture */}
-            <div className="relative group">
-              <div className="w-32 h-32 rounded-full overflow-hidden shadow-2xl ring-4 ring-white dark:ring-gray-700">
-                <Avatar className="h-32 w-32 border-2 border-primary">
-                  <AvatarImage src={user?.profile_picture ?? undefined} />
-                  <AvatarFallback className="bg-muted text-primary text-lg font-semibold">
-                    {initials || <User className="h-8 w-8" />}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white dark:border-gray-800 flex items-center justify-center">
-                <div className="w-2 h-2 bg-white rounded-full" />
-              </div>
-            </div>
-
-            {/* User Info */}
-            <div className="flex-1 text-center md:text-left space-y-4">
-              <div>
-                <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                  {displayName}
-                </h1>
-                <p className="text-lg text-gray-600 dark:text-gray-400 mb-1">
-                  @{user.username}
-                </p>
+        {/* Profile Card - Redesigned */}
+        <div className="relative mb-20 mt-12">
+           {/* Background Card */}
+           <div className="bg-white rounded-[2.5rem] border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-visible p-8 pt-24 md:pt-10 md:pl-56 min-h-[220px]">
+              
+              {/* Floating Avatar */}
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 md:left-10 md:translate-x-0 md:top-1/2 md:-translate-y-1/2">
+                 <div className="relative group">
+                    <Avatar className="h-32 w-32 md:h-44 md:w-44 border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
+                      <AvatarImage src={user?.profile_picture ?? undefined} className="object-cover" />
+                      <AvatarFallback className="bg-[#FFD93D] text-black text-4xl font-black flex items-center justify-center">
+                        <User className="h-16 w-16" />
+                      </AvatarFallback>
+                    </Avatar>
+                 </div>
               </div>
 
-              {/* Contact Info */}
-              <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm">
-                <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
-                  <Mail className="w-4 h-4 text-blue-500" />
-                  <span className="text-gray-700 dark:text-gray-300">
-                    {user.email}
-                  </span>
-                </div>
-                {user.phone && (
-                  <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
-                    <Phone className="w-4 h-4 text-green-500" />
-                    <span className="text-gray-700 dark:text-gray-300">
-                      {user.phone}
-                    </span>
-                  </div>
-                )}
+              {/* User Info Content */}
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 text-center md:text-left">
+                 
+                 <div className="w-full md:w-auto space-y-2">
+                    <h1 className="text-4xl md:text-5xl font-black text-black tracking-tight leading-none mb-2">
+                       {displayName}
+                    </h1>
+                    <p className="text-xl font-bold text-black/40">@{user.username}</p>
+                    
+                    <div className="flex flex-wrap justify-center md:justify-start gap-3 pt-4">
+                       <div className="flex items-center text-sm font-bold text-black border-2 border-black bg-gray-50 px-3 py-1.5 rounded-lg">
+                          <Mail className="w-4 h-4 mr-2" />
+                          {user.email}
+                       </div>
+                       {user.phone && (
+                         <div className="flex items-center text-sm font-bold text-black border-2 border-black bg-gray-50 px-3 py-1.5 rounded-lg">
+                            <Phone className="w-4 h-4 mr-2" />
+                            {user.phone}
+                         </div>
+                       )}
+                    </div>
+                 </div>
+
+                 {/* Stats */}
+                 <div className="flex gap-4 w-full md:w-auto justify-center md:justify-end">
+                    <div className="bg-[#FFD93D] border-2 border-black p-4 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center min-w-[100px] transform rotate-2">
+                       <div className="text-3xl font-black">{posts.length}</div>
+                       <div className="text-xs font-bold uppercase tracking-wider">Items</div>
+                    </div>
+                    <div className="bg-[#FF6B6B] text-white border-2 border-black p-4 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center min-w-[100px] transform -rotate-1">
+                       <div className="text-3xl font-black">{soldListings}</div>
+                       <div className="text-xs font-bold uppercase tracking-wider">Sold</div>
+                    </div>
+                 </div>
               </div>
 
-              {/* Stats */}
-              <div className="flex justify-center md:justify-between space-x-8 pt-4">
-                <div className="flex space-x-8">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {posts?.length || 0}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Total Posts
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">{activeListings}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Active
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">{soldListings}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Sold
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex-col text-center flex">
-                    <div className="text-2xl font-bold">
-                      Rs {totalEarnings.toLocaleString()}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Earnings
-                    </div>
-                  </div>
-                </div>
+              {/* Description/Bio Placeholder (Optional) */}
+              <div className="mt-8 pt-8 border-t-2 border-dashed border-black/10">
+                 <p className="text-black/60 font-medium text-center md:text-left">
+                    Member since 2024 • Verified Seller
+                 </p>
               </div>
-            </div>
-          </div>
+
+           </div>
         </div>
 
-        {/* Posts Section */}
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-3xl border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden">
-          {/* Posts Header */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-                <ShoppingBag className="w-6 h-6 mr-3 text-primary" />
-                Listings ({posts?.length || 0})
-              </h2>
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant={viewMode === "grid" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setViewMode("grid")}
-                >
-                  <Grid3X3 className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setViewMode("list")}
-                >
-                  <List className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Posts Content */}
-          <div className="p-6">
-            {!posts || posts.length === 0 ? (
-              <div className="text-center py-16 space-y-4">
-                <div className="text-6xl">📦</div>
-                <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400">
-                  No listings yet
-                </h3>
-                <p className="text-gray-500 dark:text-gray-500">
-                  This user hasn&apos;t posted any items for sale.
-                </p>
-              </div>
-            ) : (
-              <div
-                className={
-                  viewMode === "grid"
-                    ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                    : "space-y-4"
-                }
+        {/* Listings Section */}
+        <div className="flex items-center justify-between mb-8">
+           <h2 className="text-3xl font-black flex items-center gap-3">
+              <span className="bg-black text-white p-2 rounded-lg transform -rotate-3">
+                <Store className="w-6 h-6" />
+              </span>
+              Storefront
+           </h2>
+           
+           <div className="flex bg-white rounded-xl p-1.5 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <button 
+                 onClick={() => setViewMode("grid")}
+                 className={`p-2 rounded-lg transition-all ${viewMode === "grid" ? "bg-[#FFD93D] text-black border-2 border-black" : "text-gray-400 hover:text-black"}`}
               >
-                {posts.map((post) => (
-                  <div
-                    key={post._id}
-                    className={`group cursor-pointer transition-all duration-300 hover:scale-105 ${
-                      viewMode === "grid"
-                        ? "bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl border border-gray-200 dark:border-gray-700"
-                        : "bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 flex items-center space-x-4"
-                    }`}
-                    onClick={() => router.push(`/bazaar/${post._id}`)}
-                  >
-                    {viewMode === "grid" ? (
-                      <>
-                        <div className="relative h-48 overflow-hidden">
-                          <Image
-                            src={post.image}
-                            alt={post.title}
-                            width={300}
-                            height={200}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                          />
-                          <Badge
-                            className={`absolute top-3 right-3 ${getStatusColor(post.status)} border-0`}
-                          >
-                            {post.status}
-                          </Badge>
-                        </div>
-                        <div className="p-4 space-y-3">
-                          <h3 className="font-semibold text-lg text-gray-900 dark:text-white line-clamp-2">
-                            {post.title}
-                          </h3>
-                          <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 text-sm">
-                            <MapPin className="w-4 h-4" />
-                            <span>{post.location}</span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-2xl font-bold text-green-600 dark:text-green-400">
-                              Rs {post.price?.toLocaleString()}
-                            </span>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                          <Image
-                            src={post.image}
-                            alt={post.title}
-                            width={80}
-                            height={80}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="flex-1 space-y-1">
-                          <div className="flex items-center justify-between">
-                            <h3 className="font-semibold text-gray-900 dark:text-white">
-                              {post.title}
-                            </h3>
-                            <Badge
-                              className={`${getStatusColor(post.status)} border-0 text-xs`}
-                            >
-                              {post.status}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 text-sm">
-                            <MapPin className="w-3 h-3" />
-                            <span>{post.location}</span>
-                          </div>
-                          <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                            Rs {post.price?.toLocaleString()}
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                 <Grid3X3 className="w-5 h-5" />
+              </button>
+              <button 
+                 onClick={() => setViewMode("list")}
+                 className={`p-2 rounded-lg transition-all ${viewMode === "list" ? "bg-[#FFD93D] text-black border-2 border-black" : "text-gray-400 hover:text-black"}`}
+              >
+                 <List className="w-5 h-5" />
+              </button>
+           </div>
         </div>
+
+        {posts.length === 0 ? (
+           <div className="bg-white rounded-3xl p-16 text-center border-2 border-black border-dashed">
+              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-black/10">
+                 <Store className="w-10 h-10 text-gray-300" />
+              </div>
+              <h3 className="text-2xl font-black mb-2">Empty Storefront</h3>
+               <p className="text-black/50 font-medium text-lg max-w-md mx-auto">
+                 This seller has not stocked their shelves yet. Check back later!
+               </p>
+           </div>
+        ) : (
+           <div className={viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-4"}>
+              {posts.map((post) => (
+                 <div 
+                    key={post._id}
+                    onClick={() => router.push(`/bazaar/${post._id}`)}
+                    className={`
+                       group cursor-pointer bg-white border-2 border-black transition-all duration-300
+                       ${viewMode === "grid" 
+                         ? "flex flex-col rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]" 
+                         : "flex gap-6 p-4 rounded-xl hover:bg-gray-50 items-center shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]"}
+                    `}
+                 >
+                    <div className={`relative overflow-hidden ${viewMode === "grid" ? "aspect-[4/3] w-full border-b-2 border-black rounded-t-[14px]" : "w-32 h-32 rounded-lg border-2 border-black flex-shrink-0"}`}>
+                       <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                       {viewMode === "grid" && (
+                          <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-black uppercase border-2 border-black ${getStatusColor(post.status)}`}>
+                             {post.status}
+                          </div>
+                       )}
+                    </div>
+                    
+                    <div className={viewMode === "grid" ? "p-5" : "flex-1 min-w-0 pr-4"}>
+                       <div className="flex justify-between items-start mb-2">
+                          <h3 className="font-black text-xl leading-tight truncate pr-4">{post.title}</h3>
+                          {viewMode === "list" && (
+                             <span className={`px-3 py-1 rounded-full text-xs font-black uppercase border-2 border-black ${getStatusColor(post.status)}`}>
+                                {post.status}
+                             </span>
+                          )}
+                       </div>
+                       
+                       <div className="flex items-center text-sm font-bold text-black/50 mb-4">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          {post.location}
+                       </div>
+                       
+                       <div className="flex items-center justify-between mt-auto">
+                          <span className="text-2xl font-black">Rs. {post.price.toLocaleString()}</span>
+                          {viewMode === "grid" && (
+                            <div className="bg-black text-white p-2 rounded-full transform group-hover:rotate-45 transition-transform">
+                                <ArrowLeft className="w-4 h-4 rotate-135" />
+                            </div>
+                          )}
+                       </div>
+                    </div>
+                 </div>
+              ))}
+           </div>
+        )}
       </div>
     </div>
   );

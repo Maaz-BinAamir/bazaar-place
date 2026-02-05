@@ -6,11 +6,11 @@ import Image from "next/image";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, MapPin, MessageCircle } from "lucide-react";
-
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ArrowLeft, MapPin, MessageCircle, Share2, ShieldCheck, User } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
+import { format } from "date-fns";
+import { ProductDetailsSkeleton } from "@/components/skeletons/product-details";
 
 export default function Page() {
   const params = useParams();
@@ -24,213 +24,187 @@ export default function Page() {
 
   const markAsSold = useMutation(api.posts.markAsSold);
 
+  if (post === undefined) {
+     return <ProductDetailsSkeleton />;
+  }
+
   if (post === null) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-gray-900 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Button variant="ghost" onClick={() => router.back()}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <div className="text-6xl">🔍</div>
-          <h2 className="text-2xl font-semibold text-gray-600 dark:text-gray-400">
-            Post not found
-          </h2>
-          <p className="text-gray-500 dark:text-gray-500">
-            The post you&apos;re looking for doesn&apos;t exist or has been
-            removed.
+      <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-4">
+        <div className="text-center space-y-6 max-w-md bg-white p-12 rounded-3xl border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="text-6xl mb-4">🔭</div>
+          <h2 className="text-3xl font-black text-black uppercase">Item Not Found</h2>
+          <p className="text-black/60 font-medium text-lg">
+            This artifact seems to have been lost to time (or deleted).
           </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!post) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-gray-900">
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <Button
-            variant="ghost"
-            onClick={() => router.back()}
-            className="mb-8 hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all duration-200"
+          <Button 
+            onClick={() => router.push('/bazaar')}
+            className="w-full h-12 bg-black text-white rounded-xl font-bold hover:bg-[#FF6B6B] hover:shadow-none shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] transition-all"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+            Return to Bazaar
           </Button>
-          <div className="animate-pulse space-y-8">
-            <div className="h-[60vh] bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-2xl" />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 space-y-4">
-                <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-lg w-3/4" />
-                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full" />
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6" />
-              </div>
-              <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl" />
-            </div>
-          </div>
         </div>
       </div>
     );
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case "available":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "sold":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
-    }
-  };
+  const isSold = post.status === "sold";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-gray-900">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <Button
-            variant="ghost"
+    <div className="min-h-screen bg-[#FDFBF7] pb-24">
+      {/* Navbar Placeholder/Back Button */}
+      <div className="max-w-4xl mx-auto px-6 pt-8 pb-6 flex justify-between items-center">
+         <Button 
+            variant="ghost" 
             onClick={() => router.back()}
-            className="hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all duration-200 backdrop-blur-sm"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Bazaar
-          </Button>
-        </div>
+            className="font-bold hover:bg-black/5 -ml-4 text-black/60 hover:text-black transition-colors"
+         >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back
+         </Button>
+         <Button
+            variant="outline"
+            size="icon"
+            className="rounded-full border-2 border-black hover:bg-[#FFD93D] hover:text-black transition-colors"
+            onClick={() => {
+               navigator.clipboard.writeText(window.location.href);
+               // Simple alert fallback if toast isn't available in this context
+               alert("Link copied to clipboard!");
+            }}
+         >
+            <Share2 className="w-4 h-4" />
+         </Button>
+      </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Image and Description */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Hero Image */}
-            <div className="relative group overflow-hidden rounded-2xl shadow-2xl">
-              <Image
-                src={post.image || ""}
-                alt={post.title}
-                width={800}
-                height={500}
-                className="w-full h-[60vh] object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] gap-8 items-start">
+           
+           {/* LEFT COLUMN: VISUALS */}
+           <div className="space-y-6">
+              <div className="relative group">
+                 {/* Main Image Container */}
+                 <div className="aspect-[4/3] w-full relative bg-white rounded-3xl border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+                    <Image
+                       src={post.image || ""}
+                       alt={post.title}
+                       fill
+                       className={`object-cover ${isSold ? "grayscale contrast-125" : ""}`}
+                       priority
+                    />
+                    
+                    {/* Status Stickers */}
+                    {isSold && (
+                       <div className="absolute inset-0 flex items-center justify-center bg-black/10 backdrop-blur-[2px]">
+                          <div className="bg-[#FF6B6B] text-white px-8 py-4 rotate-[-12deg] border-4 border-white shadow-xl">
+                             <span className="text-4xl font-black uppercase tracking-widest">SOLD</span>
+                          </div>
+                       </div>
+                    )}
+                 </div>
 
-            {/* Title and Author */}
-            <div className="space-y-4">
-              <div className="flex items-start justify-between flex-wrap gap-4">
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
-                  {post.title}
-                </h1>
-                <Badge
-                  className={`${getStatusColor(post.status)} border-0 px-4 py-2 text-sm font-medium`}
-                >
-                  {post.status}
-                </Badge>
+                 {/* Price Tag - Floating */}
+                 <div className="absolute -bottom-6 -right-4 bg-[#FFD93D] text-black px-6 py-3 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-2 group-hover:rotate-0 transition-transform">
+                    <p className="text-xs font-bold text-black/60 uppercase tracking-wider">Price</p>
+                    <p className="text-3xl font-black">Rs. {post.price?.toLocaleString()}</p>
+                 </div>
               </div>
 
-              {post.author && (
-                <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                  <Image
-                    src={
-                      post.author?.profile_picture ||
-                      "https://placehold.co/40x40"
-                    }
-                    alt={post.author.name || "author name"}
-                    width={32}
-                    height={32}
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <div>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {post.author.name}
-                    </span>
-                    <span className="mx-2">•</span>
-                    <span className="text-sm">{post.author.email}</span>
-                  </div>
-                </div>
-              )}
-            </div>
+              {/* Description Card */}
+              <div className="bg-white rounded-3xl border-2 border-black p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] mt-12">
+                 <h3 className="text-xl font-black mb-4 flex items-center gap-2">
+                    <ShieldCheck className="w-6 h-6 text-[#4ECDC4]" />
+                    Item Details
+                 </h3>
+                 <p className="text-lg text-black/80 leading-relaxed whitespace-pre-wrap font-medium">
+                    {post.description}
+                 </p>
+                 
+                 <div className="mt-8 pt-6 border-t-2 border-dashed border-gray-200 flex flex-wrap gap-4">
+                    <div className="bg-gray-50 px-4 py-2 rounded-lg border border-black/5">
+                       <span className="text-xs font-bold text-gray-400 uppercase block">Posted</span>
+                       <span className="font-bold">{format(new Date(post._creationTime), "MMM d, yyyy")}</span>
+                    </div>
+                    <div className="bg-gray-50 px-4 py-2 rounded-lg border border-black/5">
+                       <span className="text-xs font-bold text-gray-400 uppercase block">Location</span>
+                       <span className="font-bold flex items-center gap-1">
+                          <MapPin className="w-3 h-3" /> {post.location}
+                       </span>
+                    </div>
+                 </div>
+              </div>
+           </div>
 
-            <Separator className="bg-gray-200 dark:bg-gray-700" />
 
-            {/* Description */}
-            <div className="prose prose-lg dark:prose-invert max-w-none">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                Description
-              </h3>
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
-                {post.description}
-              </p>
-            </div>
-          </div>
-
-          {/* Right Column - Details and Actions */}
-          <div className="space-y-6">
-            {/* Price Card */}
-            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-xl">
-              <div className="flex items-center space-x-3 mb-4">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Price
-                  </p>
-                  <p className="text-3xl font-bold">
-                    Rs {post.price?.toLocaleString()}
-                  </p>
-                </div>
+           {/* RIGHT COLUMN: ACTIONS & SELLER */}
+           <div className="space-y-6 md:sticky md:top-24">
+              
+              {/* Title Section */}
+              <div>
+                 <h1 className="text-4xl md:text-5xl font-black text-black leading-[0.95] tracking-tight mb-4">
+                    {post.title}
+                 </h1>
+                 <div className="flex gap-2">
+                    {/* <span className="px-3 py-1 bg-black text-white text-xs font-bold rounded-full">
+                       {post.category || "General"}
+                    </span> */}
+                 </div>
               </div>
 
-              <Separator className="mb-6 bg-gray-200 dark:bg-gray-600" />
+              {/* Seller Card */}
+              <div 
+                 className="bg-white p-6 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:-translate-y-1 transition-transform"
+                 onClick={() => router.push(`/profile/${post.author?._id}`)}
+              >
+                 <div className="flex items-center gap-4">
+                    <div className="h-16 w-16 shrink-0">
+                       <Avatar className="h-full w-full border-2 border-black bg-white">
+                          <AvatarImage src={post.author?.profile_picture || ""} className="object-cover" />
+                          <AvatarFallback className="bg-[#FFD93D] text-black text-xl font-black">
+                             <User className="h-8 w-8" />
+                          </AvatarFallback>
+                       </Avatar>
+                    </div>
+                    <div className="min-w-0">
+                       <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Listed by</p>
+                       <h3 className="text-xl font-bold truncate">{post.author?.name}</h3>
+                       <p className="text-sm font-medium text-[#4ECDC4]">View full profile →</p>
+                    </div>
+                 </div>
+              </div>
 
               {/* Action Buttons */}
-              {post.isAuthor ? (
-                <>
-                  <Button
-                    className="w-full border-0 h-12 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
-                    onClick={() => {
-                      if (post.status === "sold") return;
-                      markAsSold({ id: post._id });
-                    }}
-                  >
-                    {post.status === "available" ? "Mark as Sold" : "Sold"}
-                  </Button>
-                </>
-              ) : (
-                <div className="space-y-3">
-                  <Button
-                    className="w-full border-0 h-12 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
-                    onClick={() => router.push(`/chat?newFromPost=${post._id}`)}
-                  >
-                    <MessageCircle className="w-5 h-5 mr-2" />
-                    Contact Seller
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    className="w-full h-12 border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
-                    onClick={() => router.push(`/bazaar`)}
-                  >
-                    Browse More Items
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            {/* Additional Info */}
-            <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                <MapPin className="w-4 h-4 mr-2" />
-                Location
-              </h3>
-              <div className="space-y-3 text-sm">
-                <p className="text-gray-700 dark:text-gray-300">
-                  {post.location}
-                </p>
+              <div className="space-y-3 pt-4">
+                 {post.isAuthor ? (
+                    <Button
+                       className={`w-full h-14 text-lg font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all
+                       ${isSold ? "bg-gray-100 text-gray-400" : "bg-[#FF6B6B] text-white hover:bg-[#FF6B6B]/90"}`}
+                       onClick={() => {
+                          if (isSold) return;
+                          markAsSold({ id: post._id });
+                       }}
+                       disabled={isSold}
+                    >
+                       {isSold ? "Item Sold" : "Mark as Sold"}
+                    </Button>
+                 ) : (
+                    <Button
+                       className="w-full h-14 text-lg font-bold bg-black text-white border-2 border-black shadow-[4px_4px_0px_0px_#4ECDC4] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-black/90 transition-all"
+                       onClick={() => router.push(`/chat?newFromPost=${post._id}`)}
+                       disabled={isSold}
+                    >
+                       <MessageCircle className="w-5 h-5 mr-2" />
+                       {isSold ? "Sold Out" : "Contact Seller"}
+                    </Button>
+                 )}
+                 
+                 {!post.isAuthor && !isSold && (
+                    <p className="text-xs text-center text-gray-500 font-medium px-4">
+                       Safe transaction tip: Meet in public places and inspect the item before paying.
+                    </p>
+                 )}
               </div>
-            </div>
-          </div>
+
+           </div>
         </div>
       </div>
     </div>
