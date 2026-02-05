@@ -37,15 +37,15 @@ export default function LandingPage() {
 
       <main className="relative z-10">
         {/* Hero Section */}
-        <section className="pt-20 pb-32 px-6 max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
+        <section className="pt-10 pb-32 px-6 max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
           <div className="flex-1 space-y-8 relative">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-black/10 shadow-sm text-sm font-medium text-gray-600 animate-fade-in-up">
+            {/* <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-black/10 shadow-sm text-sm font-medium text-gray-600 animate-fade-in-up">
               <Sparkles className="w-4 h-4 text-[#FF6B6B]" />
               <span>The marketplace for unique finds</span>
-            </div>
+            </div> */}
             
             <h1 className="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight">
-              Give your stuff a <br/>
+              Give your stuff a {" "}
               <span className="relative inline-block text-[#FF6B6B]">
                 second life
                 <svg className="absolute w-full h-3 -bottom-1 left-0 text-[#FF6B6B]/30" viewBox="0 0 100 10" preserveAspectRatio="none">
