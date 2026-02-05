@@ -17,10 +17,10 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 sm:gap-8">
         {/* Logo */}
         <Link href="/bazaar" className="flex items-center gap-2 flex-shrink-0 group">
-          <div className="w-10 h-10 bg-[#FF6B6B] rounded-xl -rotate-3 flex items-center justify-center border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] group-hover:rotate-0 group-hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:translate-x-[1px] group-hover:translate-y-[1px] transition-all">
-             <Store className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 bg-[#FF6B6B] rounded-xl rotate-3 flex items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:rotate-0 group-hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:translate-x-[1px] group-hover:translate-y-[1px] transition-all">
+             <Store className="w-6 h-6 text-white" />
           </div>
-          <span className="hidden sm:inline-block text-xl font-black tracking-tight italic text-black">BazaarPlace</span>
+          <span className="hidden sm:inline-block text-2xl font-black tracking-tight italic text-black">BazaarPlace</span>
         </Link>
 
         {/* Search */}
