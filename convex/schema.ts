@@ -32,6 +32,7 @@ export default defineSchema({
     conversation: v.id("conversations"),
     sender: v.id("users"),
     content: v.union(v.string(), v.id("_storage")),
+    isImage: v.boolean(),
     timestamp: v.number(),
     read: v.boolean(),
   }).index("by_conversation", ["conversation", "timestamp"]),

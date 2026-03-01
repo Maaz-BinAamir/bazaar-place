@@ -14,6 +14,7 @@ import { api } from "@/convex/_generated/api";
 
 import { formatShortTimeAgo } from "@/lib/utils";
 
+
 export default function ChatSidebar({
   conversation_id: conversationId,
 }: {
@@ -95,12 +96,25 @@ export default function ChatSidebar({
                     Rs. {conversation?.post?.price}
                   </p>
                   <div className="flex justify-between items-end">
-                    <p className="text-xs text-black/60 truncate max-w-[120px]">
-                      <span className="font-semibold text-black">
-                        {conversation?.otherUser?.username}:
-                      </span>{" "}
-                      {conversation?.lastMessage?.content}
-                    </p>
+                    {conversation?.lastMessage?.isImage && conversation?.lastMessage?.content ? (
+                      <div className="flex items-center gap-2">
+                        <Image
+                          src={conversation.lastMessage.content}
+                          alt="image"
+                          width={32}
+                          height={32}
+                          className="h-8 w-8 rounded-md border border-black/20 object-cover flex-shrink-0"
+                        />
+                        <span className="text-xs text-black/50 italic">Image</span>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-black/60 truncate max-w-[120px]">
+                        <span className="font-semibold text-black">
+                          {conversation?.otherUser?.username}:
+                        </span>{" "}
+                        {conversation?.lastMessage?.content}
+                      </p>
+                    )}
                     {conversation?.lastMessage?.timestamp && (
                       <span className="text-[10px] font-medium text-black/40">
                         {formatShortTimeAgo(
