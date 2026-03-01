@@ -79,7 +79,8 @@ export const getConversations = query({
             profile_picture: profilePictureUrl,
           },
           lastMessage: {
-            content: lastMessageDoc?.content,
+            content: lastMessageContent,
+            isImage: lastMessageDoc?.isImage ?? false,
             sender: lastMessageDoc?.sender,
             timestamp: lastMessageDoc?.timestamp,
           },
@@ -95,6 +96,7 @@ export const createConversation = mutation({
     sellerId: v.id("users"),
     postId: v.id("posts"),
     content: v.union(v.string(), v.id("_storage")),
+    isImage: v.boolean(),
   },
   handler: async (ctx, args) => {
     const buyerId = (await getAuthUserId(ctx))!;
@@ -110,6 +112,7 @@ export const createConversation = mutation({
       conversation: conversationId,
       sender: buyerId,
       content: args.content,
+      isImage: args.isImage,
       timestamp: Date.now(),
       read: false,
     });
@@ -132,7 +135,7 @@ export const getMessages = query({
 
     const recipient = (await ctx.db.get(recipientId))!;
 
-    const messages = await ctx.db
+    const rawMessages = await ctx.db
       .query("messages")
       .withIndex("by_conversation", (q) =>
         q.eq("conversation", args.conversationId),
@@ -142,6 +145,17 @@ export const getMessages = query({
 
     const post = await ctx.db.get(conversation.post);
     if (!post) throw new Error("Post not found");
+
+    // Resolve any image storage IDs to public URLs
+    const messages = await Promise.all(
+      rawMessages.map(async (msg) => {
+        const resolvedContent = msg.isImage
+          ? await ctx.storage.getUrl(msg.content as Id<"_storage">) ?? msg.content
+          : msg.content;
+
+        return { ...msg, content: resolvedContent };
+      }),
+    );
 
     return {
       recipient: {

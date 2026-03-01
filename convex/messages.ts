@@ -7,6 +7,7 @@ export const sendMessage = mutation({
   args: {
     conversationId: v.id("conversations"),
     content: v.union(v.string(), v.id("_storage")),
+    isImage: v.boolean(),
   },
   handler: async (ctx, args) => {
     const senderId = (await getAuthUserId(ctx))!;
@@ -15,6 +16,7 @@ export const sendMessage = mutation({
       conversation: args.conversationId,
       sender: senderId,
       content: args.content,
+      isImage: args.isImage,
       timestamp: Date.now(),
       read: false,
     });
@@ -32,7 +34,7 @@ export const readMessage = mutation({
     const messages = await ctx.db
       .query("messages")
       .withIndex("by_conversation", (q) =>
-        q.eq("conversation", args.conversationId)
+        q.eq("conversation", args.conversationId),
       )
       .order("asc")
       .collect();
