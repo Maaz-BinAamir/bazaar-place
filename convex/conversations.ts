@@ -57,6 +57,14 @@ export const getConversations = query({
 
         const numberOfUnread = unreadMessages.length;
 
+        // Resolve last message content: if image, get the public URL
+        let lastMessageContent: string | null = null;
+        if (lastMessageDoc?.content) {
+          lastMessageContent = lastMessageDoc.isImage
+            ? (await ctx.storage.getUrl(lastMessageDoc.content as Id<"_storage">)) ?? null
+            : (lastMessageDoc.content as string);
+        }
+
         return {
           id: conversation._id,
           isClosed: conversation.is_closed,
