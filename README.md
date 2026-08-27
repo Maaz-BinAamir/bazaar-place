@@ -8,15 +8,41 @@ This project was built to practice a complete full-stack product flow with Next.
 
 Add screenshots to `docs/screenshots/` and replace the placeholder paths below.
 
-![BazaarPlace landing page](docs/screenshots/landing-page.png)
+<p align="center">
+  <img width="1920" height="1080" alt="BazaarPlace landing page" src="https://github.com/user-attachments/assets/ce4d8ada-d76e-42db-8f26-d83e71545beb" />
+  <br>
+  <em>Landing page</em>
+</p>
 
-![Marketplace listings](docs/screenshots/marketplace.png)
+<p align="center">
+  <img width="1920" height="1080" alt="Login page" src="https://github.com/user-attachments/assets/354c6829-c5df-45d9-a1b0-7c3b71428723" />
+  <br>
+  <em>Login page</em>
+</p>
 
-![Listing details](docs/screenshots/listing-details.png)
+<p align="center">
+  <img width="1920" height="1080" alt="Marketplace listings" src="https://github.com/user-attachments/assets/19c7fe5f-e435-4a69-b8ff-dba07bc060c1" />
+  <br>
+  <em>Marketplace listings</em>
+</p>
 
-![Messaging interface](docs/screenshots/messaging.png)
+<p align="center">
+  <img width="1920" height="1080" alt="Listing details" src="https://github.com/user-attachments/assets/93b3c48a-7842-41f4-b439-7e23026e223e" />
+  <br>
+  <em>Listing details</em>
+</p>
 
-![User profile](docs/screenshots/profile.png)
+<p align="center">
+  <img width="1920" height="1080" alt="Messaging interface" src="https://github.com/user-attachments/assets/2c0eebbf-8c7e-4843-940f-5e4b95094596" />
+  <br>
+  <em>Messaging interface</em>
+</p>
+
+<p align="center">
+  <img width="1920" height="1080" alt="User profile" src="https://github.com/user-attachments/assets/0c0ffed4-d2b7-421f-b4b5-08d317140665" />
+  <br>
+  <em>User profile</em>
+</p>
 
 ## Features
 
@@ -133,7 +159,7 @@ https://your-deployment.convex.site/api/auth/callback/google
 ```
 
 
-
+<!--
 ## Future improvements
 
 - Add category and price filters.
@@ -142,5 +168,6 @@ https://your-deployment.convex.site/api/auth/callback/google
 - Add stronger authorization checks for listing updates and conversations.
 - Add automated tests for authentication, listings, and chat flows.
 - Add moderation and reporting tools for marketplace safety.
+-->
 
 
